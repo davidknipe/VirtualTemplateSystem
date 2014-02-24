@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>VirtualTemplateSystem</id>
+    <version>1.0.0</version>
+    <authors>David Knipe</authors>
+    <owners>David Knipe</owners>
+    <licenseUrl>https://github.com/davidknipe/VTS</licenseUrl>
+    <projectUrl>https://github.com/davidknipe/VTS</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Virtual Template System for EPiServer 7.5 upwards allows users to modify templates from the EPiServer UI</description>
+    <tags>EPiServer</tags>
+  </metadata>
+</package>

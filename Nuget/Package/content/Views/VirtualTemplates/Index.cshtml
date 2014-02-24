@@ -1,0 +1,71 @@
+﻿@model VirtualTemplates.UI.Models.VirtualTemplatesViewModel
+
+@{
+    Layout = "_VirtualTemplatesRoot.cshtml";
+}
+
+@Html.Raw(EPiServer.Shell.Navigation.MenuHelper.CreateGlobalMenu("/global", "/global/templates/edit"))
+
+<div class="panel-body">
+
+    @if(!String.IsNullOrEmpty(Model.ConfirmMessage))
+    {
+        <div class="alert alert-success" id="divAlert">
+            @Html.Raw(Model.ConfirmMessage)
+
+            @if (!string.IsNullOrEmpty(Model.LastActionPath))
+            {
+                @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/editnow", "Edit Now"), "Edit", new { VirtualPath = @Model.LastActionPath, ShowAllTemplates = @Model.ShowAllTemplates }, new { @class = "btn btn-sm btn-default" })
+            }
+            
+        </div>
+    }
+
+    @if (!String.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger" id="divAlert">
+            @Html.Raw(Model.ErrorMessage)
+        </div>
+    }
+
+    <span class="radio inline">
+        <a href="@Url.Action("List", new { ShowAllTemplates = false })" style="color: black;">
+            @Html.RadioButtonFor(model => model.ShowAllTemplates, false)@Html.TranslateFallback("/virtualtemplatesystem/filters/templatessavedinrespository", "Templates saved in respository")
+        </a>
+    </span>
+    <span class="radio inline">
+        <a href="@Url.Action("List", new { ShowAllTemplates = true })" style="color: black;">
+            @Html.RadioButtonFor(model => model.ShowAllTemplates, true)@Html.TranslateFallback("/virtualtemplatesystem/filters/showalltemplates", "Show all templates (including those on disk)")
+        </a>
+    </span>
+    <hr />
+
+    <table>
+
+        @foreach (var item in Model.TemplateList)
+        {
+            <tr>
+                <td style="padding: 5px;">
+                    <p>@item.FilePath</p>
+                </td>
+                <td>
+                    <p>
+                        @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/view", "View"), "Display", new { VirtualPath = @item.FilePath, ShowAllTemplates = @Model.ShowAllTemplates }, new { @class = "btn btn-sm btn-default" })
+                        @if(!item.IsVirtual)
+                        {
+                            @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/makevirtual", "Make Virtual"), "MakeVirtual", new { VirtualPath = @item.FilePath, ShowAllTemplates = true }, new { @class = "btn btn-sm btn-default" })
+                        }
+                        @if (item.IsVirtual)
+                        {
+                            @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/edit", "Edit"), "Edit", new { VirtualPath = @item.FilePath, ShowAllTemplates = @Model.ShowAllTemplates }, new { @class = "btn btn-sm btn-default" })
+                            @Html.Raw("&nbsp")
+                            @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/delete", "Delete"), "Delete", new { VirtualPath = @item.FilePath, ShowAllTemplates = @Model.ShowAllTemplates }, new { @class = "btn btn-sm btn-default", @onclick = "return confirm('" + @Html.TranslateFallback("/virtualtemplatesystem/messages/deleteconfirmprompt", "Are you sure you want to delete? This action cannot be undone and the template will be removed from the repository.") + "');" })
+                        }
+                    </p>
+                </td>
+            </tr>
+        }
+
+    </table>
+
+</div>

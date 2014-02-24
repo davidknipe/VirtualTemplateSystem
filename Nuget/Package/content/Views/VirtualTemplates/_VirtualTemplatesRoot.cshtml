@@ -1,0 +1,23 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Virtual Templates System</title>
+
+    @Html.Raw(EPiServer.Framework.Web.Resources.ClientResources.RenderResources("ShellCore"))
+    @Html.Raw(EPiServer.Framework.Web.Resources.ClientResources.RenderResources("ShellWidgets"))
+    @Html.Raw(EPiServer.Framework.Web.Resources.ClientResources.RenderResources("ShellCoreLightTheme"))
+    @Html.Raw(EPiServer.Framework.Web.Resources.ClientResources.RenderResources("Navigation"))
+    @Html.Raw(EPiServer.Framework.Web.Resources.ClientResources.RenderResources("DojoDashboardCompatibility"))
+
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script type="text/javascript" src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+<body>
+    @RenderBody()
+</body>
+</html>

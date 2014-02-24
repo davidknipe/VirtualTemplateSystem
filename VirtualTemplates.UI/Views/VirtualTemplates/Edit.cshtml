@@ -1,0 +1,30 @@
+﻿@model VirtualTemplates.UI.Models.VirtualTemplatesEditModel
+
+@{
+    Layout = "_VirtualTemplatesRoot.cshtml";
+}
+
+@Html.Raw(EPiServer.Shell.Navigation.MenuHelper.CreateGlobalMenu("/global", "/global/templates/edit"))
+<div class="panel-body">
+
+    @using (Html.BeginForm())
+    {
+        <p>
+            <a href="@Url.Action("Index")" class="btn btn-sm btn-default">Cancel</a>
+            <button type="submit" value="Save" class="btn btn-sm btn-success">@Html.TranslateFallback("/virtualtemplatesystem/buttons/save", "Save")</button>
+        </p>
+            
+        @Html.HiddenFor(m => Model.VirtualPath)
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">@Model.VirtualPath</h3>
+            </div>
+            <div class="panel-body">
+
+                @Html.TextAreaFor(m => Model.TemplateContents, new { @style = "height:500px;width:100%;" })
+
+            </div>
+        </div>
+    }
+
+</div>

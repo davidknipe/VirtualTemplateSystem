@@ -1,0 +1,37 @@
+﻿@model VirtualTemplates.UI.Models.VirtualTemplatesEditModel
+
+@{
+    Layout = "_VirtualTemplatesRoot.cshtml";
+}
+
+@Html.Raw(EPiServer.Shell.Navigation.MenuHelper.CreateGlobalMenu("/global", "/global/templates/edit"))
+<div class="panel-body">
+
+    @using (Html.BeginForm())
+    {
+        <p>
+            <a href="@Url.Action("Index")" class="btn btn-sm btn-default">Cancel</a>
+            @if(!Model.IsVirtual)
+            {
+                @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/makevirtual", "Make Virtual"), "MakeVirtual", new { VirtualPath = @Model.VirtualPath, ShowAllTemplates = false }, new { @class = "btn btn-sm btn-default" })
+            }
+            else
+            {
+                @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/edit", "Edit"), "Edit", new { VirtualPath = @Model.VirtualPath, ShowAllTemplates = false }, new { @class = "btn btn-sm btn-default" })
+            }
+        </p>
+            
+        @Html.HiddenFor(m => Model.VirtualPath)
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">@Model.VirtualPath</h3>
+            </div>
+            <div class="panel-body">
+
+                @Html.Raw(HttpUtility.HtmlEncode(Model.TemplateContents).Replace(" ", "&nbsp;").Replace("\r\n", "<br />").Replace("\n", "<br />"))
+
+            </div>
+        </div>
+    }
+
+</div>
