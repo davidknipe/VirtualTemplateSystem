@@ -18,7 +18,8 @@ namespace VirtualTemplates.Core.Impl
                 {
                     lock (this)
                     {
-                        var cacheVal = new HashSet<string>(this.ListAllRegisteredViews());
+                        var cacheVal = new HashSet<string>();
+                        this.ListAllRegisteredViews().ToList().ForEach(x => cacheVal.Add(x.ToLower()));
                         EPiServer.CacheManager.Insert(_registeredViewsCacheKey, cacheVal);
                         return cacheVal;
                     }
@@ -34,7 +35,7 @@ namespace VirtualTemplates.Core.Impl
         public bool Exists(string virtualPath)
         {
             //Optimise for performance by using a HashSet
-            return this.RegisteredViews.Contains(virtualPath);
+            return this.RegisteredViews.Contains(virtualPath.ToLower());
         }
 
         public VirtualTemplate GetViewFile(string virtualPath)
