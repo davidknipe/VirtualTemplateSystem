@@ -15,10 +15,9 @@ namespace VirtualTemplates.Init
              
             RouteTable.Routes.MapRoute(
                 name: "VirtualTemplatesUI",
-                url: VirtualTemplatesMenuProvider.RootUIUrl + "{controller}/{action}",
+                url: VirtualTemplatesMenuProvider.RootUIUrl + "VirtualTemplates/{action}",
                 defaults: new { controller = "VirtualTemplates", action = "Index" }
             );
-
         }
 
         public void Uninitialize(InitializationEngine context)
