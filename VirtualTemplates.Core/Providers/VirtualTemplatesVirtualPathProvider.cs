@@ -52,11 +52,6 @@ namespace VirtualTemplates.Core.Providers
             }
         }
 
-        public override VirtualDirectory GetDirectory(string virtualDir)
-        {
-            return base.GetDirectory(virtualDir);
-        }
-
         public override string GetCacheKey(string virtualPath)
         {
             //Need to use a custom cache key implementation to avoid clashes with cachekeys generated 
@@ -85,16 +80,6 @@ namespace VirtualTemplates.Core.Providers
 
                 return base.GetFileHash(virtualPath, virtualPathDependencies);
             }
-        }
-
-        // just implement the default override and return null if the path is a Virtual Path
-        public override CacheDependency GetCacheDependency(string virtualPath, System.Collections.IEnumerable virtualPathDependencies, DateTime utcStart)
-        {
-            if (_viewPersistenceService.Exists(virtualPath))
-            {
-                return null;
-            }
-            return Previous.GetCacheDependency(virtualPath, virtualPathDependencies, utcStart);
         }
     }
 }

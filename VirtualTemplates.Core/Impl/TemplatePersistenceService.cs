@@ -125,7 +125,7 @@ namespace VirtualTemplates.Core.Impl
             lock (this)
             {
                 VirtualTemplatesCache.Reset();
-                this.RegisteredViews = new HashSet<string>(this.ListAllRegisteredViews());
+                EPiServer.CacheManager.Remove(_registeredViewsCacheKey);
             }
         }
     }
