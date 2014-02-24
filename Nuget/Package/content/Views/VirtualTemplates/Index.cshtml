@@ -29,13 +29,15 @@
     }
 
     <span class="radio inline">
+        @Html.RadioButtonFor(model => model.ShowAllTemplates, false, new { @onclick = "document.location.href = '" + @Url.Action("List", new { ShowAllTemplates = false }) + "'; " })
         <a href="@Url.Action("List", new { ShowAllTemplates = false })" style="color: black;">
-            @Html.RadioButtonFor(model => model.ShowAllTemplates, false)@Html.TranslateFallback("/virtualtemplatesystem/filters/templatessavedinrespository", "Templates saved in respository")
+            @Html.TranslateFallback("/virtualtemplatesystem/filters/templatessavedinrespository", "Templates saved in respository")
         </a>
     </span>
     <span class="radio inline">
+        @Html.RadioButtonFor(model => model.ShowAllTemplates, true, new { @onclick = "document.location.href = '" + @Url.Action("List", new { ShowAllTemplates = true }) + "'; " })
         <a href="@Url.Action("List", new { ShowAllTemplates = true })" style="color: black;">
-            @Html.RadioButtonFor(model => model.ShowAllTemplates, true)@Html.TranslateFallback("/virtualtemplatesystem/filters/showalltemplates", "Show all templates (including those on disk)")
+            @Html.TranslateFallback("/virtualtemplatesystem/filters/showalltemplates", "Show all templates (including those on disk)")
         </a>
     </span>
     <hr />

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>EPiServer.CMS.Core</id>
+    <version>7.5.394.2</version>
+    <authors>EPiServer AB</authors>
+    <owners>EPiServer</owners>
+    <licenseUrl>http://world.episerver.com/PageFiles/99654/EPiServer%20EULA.txt</licenseUrl>
+    <projectUrl>http://www.episerver.com/en/Products/Content/</projectUrl>
+    <iconUrl>http://www.episerver.com/Framework/Styles/Images/Products/Content.png</iconUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>EPiServer CMS Core Assemblies</description>
+    <copyright>Copyright EPiServer AB 2013</copyright>
+    <tags>EPiServer CMS</tags>
+    <dependencies>
+      <dependency id="EPiServer.Framework" version="[7.5.394.2, 7.6)" />
+      <dependency id="Castle.Windsor" version="[3.2, 4.0)" />
+    </dependencies>
+  </metadata>
+</package>
