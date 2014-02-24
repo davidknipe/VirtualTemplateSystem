@@ -8,7 +8,7 @@
     <licenseUrl>https://github.com/davidknipe/vts/blob/master/LICENSE.md</licenseUrl>
     <projectUrl>https://github.com/davidknipe/VTS</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Virtual Template System for EPiServer 7.5 upwards allows users to modify templates from the EPiServer UI</description>
+    <description>Virtual Template System for EPiServer 7.5 upwards allows users to view and modify templates from the EPiServer UI</description>
     <tags>EPiServer</tags>
   </metadata>
 </package>
