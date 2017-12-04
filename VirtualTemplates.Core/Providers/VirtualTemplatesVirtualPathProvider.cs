@@ -1,7 +1,5 @@
 ﻿using EPiServer.ServiceLocation;
-using System;
 using System.Collections.Specialized;
-using System.Web.Caching;
 using System.Web.Hosting;
 using VirtualTemplates.Core.Impl;
 using VirtualTemplates.Core.Interfaces;
@@ -10,7 +8,7 @@ namespace VirtualTemplates.Core.Providers
 {
     public class VirtualTemplatesVirtualPathProvider : VirtualPathProvider
     {
-        private ITemplatePersistenceService _viewPersistenceService;
+        private readonly ITemplatePersistenceService _viewPersistenceService;
 
         public VirtualTemplatesVirtualPathProvider()
         {
@@ -46,10 +44,8 @@ namespace VirtualTemplates.Core.Providers
                 VirtualFile vf = _viewPersistenceService.GetViewFile(virtualPath);
                 return vf;
             }
-            else
-            {
-                return base.GetFile(virtualPath);
-            }
+
+            return base.GetFile(virtualPath);
         }
 
         public override string GetCacheKey(string virtualPath)
@@ -60,26 +56,21 @@ namespace VirtualTemplates.Core.Providers
             {
                 return VirtualTemplatesCache.VersionKey + virtualPath.Replace(@"\", "_").Replace(@"/", "_");
             }
-            else
-            {
-                return base.GetCacheKey(virtualPath);
-            }
+
+            return base.GetCacheKey(virtualPath);
         }
 
         public override string GetFileHash(string virtualPath, System.Collections.IEnumerable virtualPathDependencies)
         {
-            //Ensure the hash contains the version key as the view in the Repo may have been changed when the app is offline
-            //this forces the runtime to recompile each view stored in the Repo each time the application starts and/or the 
-            //the version key is updated
+            // Ensure the hash contains the version key as the view in the Repo may have been changed when the app is offline
+            // this forces the runtime to recompile each view stored in the Repo each time the application starts and/or the 
+            // the version key is updated
             if (_viewPersistenceService.Exists(virtualPath))
             {
                 return virtualPath + VirtualTemplatesCache.VersionKey;
             }
-            else
-            {
 
-                return base.GetFileHash(virtualPath, virtualPathDependencies);
-            }
+            return base.GetFileHash(virtualPath, virtualPathDependencies);
         }
     }
 }

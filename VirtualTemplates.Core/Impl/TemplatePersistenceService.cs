@@ -7,24 +7,30 @@ namespace VirtualTemplates.Core.Impl
 {
     public class TemplatePersistenceService : ITemplatePersistenceService
     {
-        private readonly static string _registeredViewsCacheKey = "__TemplatePersistenceService_RegisteredViews";
+        private static readonly string _registeredViewsCacheKey = "__TemplatePersistenceService_RegisteredViews";
 
         private HashSet<string> RegisteredViews
         {
             get
             {
                 //Backed onto EPiServer cache manager to ensure muliple instances share the same HashSet
-                if (EPiServer.CacheManager.Get(_registeredViewsCacheKey) == null)
+                lock (this)
                 {
-                    lock (this)
+                    if (EPiServer.CacheManager.Get(_registeredViewsCacheKey) == null)
                     {
-                        var cacheVal = new HashSet<string>();
-                        this.ListAllRegisteredViews().ToList().ForEach(x => cacheVal.Add(x.ToLower()));
-                        EPiServer.CacheManager.Insert(_registeredViewsCacheKey, cacheVal);
-                        return cacheVal;
+                        lock (this)
+                        {
+                            var cacheVal = new HashSet<string>();
+                            this.ListAllRegisteredViews().ToList().ForEach(x => cacheVal.Add(x.ToLower()));
+                            EPiServer.CacheManager.Insert(_registeredViewsCacheKey, cacheVal);
+                            return cacheVal;
+                        }
                     }
                 }
-                return (HashSet<string>)EPiServer.CacheManager.Get(_registeredViewsCacheKey);
+                lock (this)
+                {
+                    return (HashSet<string>)EPiServer.CacheManager.Get(_registeredViewsCacheKey);
+                }
             }
             set
             {
@@ -35,12 +41,12 @@ namespace VirtualTemplates.Core.Impl
         public bool Exists(string virtualPath)
         {
             //Optimise for performance by using a HashSet
-            return this.RegisteredViews.Contains(virtualPath.ToLower());
+            return RegisteredViews.Contains(virtualPath.ToLower());
         }
 
         public VirtualTemplate GetViewFile(string virtualPath)
         {
-            VirtualTemplateData data = this.GetFileData(virtualPath);
+            VirtualTemplateData data = GetFileData(virtualPath);
             if (data != null)
             {
                 return new VirtualTemplate(virtualPath, data.FileData);
@@ -53,10 +59,10 @@ namespace VirtualTemplates.Core.Impl
 
         public bool SaveViewFile(string virtualPath, byte[] fileData)
         {
-            var result = this.SaveFileData(new VirtualTemplateData() { VirtualPath = virtualPath, FileData = fileData });
+            var result = SaveFileData(new VirtualTemplateData() { VirtualPath = virtualPath, FileData = fileData });
             if (result)
             {
-                this.ResetState();
+                ResetState();
             }
             return result;
         }
@@ -77,7 +83,7 @@ namespace VirtualTemplates.Core.Impl
             }
         }
 
-        public System.Collections.Generic.IEnumerable<string> ListAllRegisteredViews()
+        public IEnumerable<string> ListAllRegisteredViews()
         {
             IList<string> viewList = new List<string>();
             using (var fileDataStore = typeof(VirtualTemplateData).GetStore())

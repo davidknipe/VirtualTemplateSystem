@@ -15,17 +15,13 @@ namespace VirtualTemplates.Init
              
             RouteTable.Routes.MapRoute(
                 name: "VirtualTemplatesUI",
-                url: VirtualTemplatesMenuProvider.RootUIUrl + "VirtualTemplates/{action}",
+                url: VirtualTemplatesMenuProvider.RootUiUrl + "VirtualTemplates/{action}",
                 defaults: new { controller = "VirtualTemplates", action = "Index" }
             );
         }
 
-        public void Uninitialize(InitializationEngine context)
-        {
-        }
+        public void Uninitialize(InitializationEngine context) { }
 
-        public void Preload(string[] parameters)
-        {
-        }
+        public void Preload(string[] parameters) { }
     }
 }

@@ -5,7 +5,7 @@ namespace VirtualTemplates.Core.Impl
 {
     public class VirtualTemplate : VirtualFile
     {
-        private byte[] data;
+        private readonly byte[] _data;
 
         public string FileContents
         {
@@ -21,12 +21,12 @@ namespace VirtualTemplates.Core.Impl
         public VirtualTemplate(string virtualPath, byte[] FileData)
             : base(virtualPath)
         {
-            this.data = FileData;
+            this._data = FileData;
         }
 
         public override System.IO.Stream Open()
         {
-            return new MemoryStream(data);
+            return new MemoryStream(_data);
         }
     }
 

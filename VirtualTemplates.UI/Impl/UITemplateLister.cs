@@ -8,8 +8,8 @@ namespace VirtualTemplates.UI.Impl
 {
     public class UITemplateLister : IUITemplateLister
     {
-        private IPhysicalFileLister _physicalFileLister;
-        private ITemplatePersistenceService _persistenceService;
+        private readonly IPhysicalFileLister _physicalFileLister;
+        private readonly ITemplatePersistenceService _persistenceService;
 
         public UITemplateLister(IPhysicalFileLister physicalFileLister, ITemplatePersistenceService persistenceService) 
         {

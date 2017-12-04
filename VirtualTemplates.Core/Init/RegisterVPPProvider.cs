@@ -10,16 +10,16 @@ namespace VirtualTemplates.Core.Init
 {
     [InitializableModule]
     [ModuleDependency(typeof(EPiServer.Web.InitializationModule))]
-    public class RegisterVPPProvider : IInitializableModule
+    public class RegisterVppProvider : IInitializableModule
     {
-        private bool _registered = false;
+        private bool _registered;
 
         public void Initialize(InitializationEngine context)
         {
             if (!_registered)
             {
-                this.RegisterVPPProviderAtTopOfList();
-                this._registered = true;
+                RegisterVPPProviderAtTopOfList();
+                _registered = true;
             }
         }
 
@@ -38,9 +38,9 @@ namespace VirtualTemplates.Core.Init
 
                 //Get Virtual path provider private field
                 FieldInfo fi = typeof(HostingEnvironment).GetField("_virtualPathProvider", BindingFlags.NonPublic | BindingFlags.Instance);
-                VirtualPathProvider currentVPP = (VirtualPathProvider)fi.GetValue(hostingEnvironmentInstance);
+                VirtualPathProvider currentVpp = (VirtualPathProvider)fi.GetValue(hostingEnvironmentInstance);
 
-                var customVPPProvider = new VirtualTemplatesVirtualPathProvider();
+                var customVppProvider = new VirtualTemplatesVirtualPathProvider();
                 MethodInfo mi = typeof(VirtualPathProvider).GetMethod("Initialize", BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(VirtualPathProvider) }, null);
                 if (mi == null)
                     return;
@@ -49,10 +49,10 @@ namespace VirtualTemplates.Core.Init
                 fi.SetValue(hostingEnvironmentInstance, null);
 
                 //Initialise the new VPP provider setting the currentVPP up as the Previous
-                mi.Invoke(customVPPProvider, new object[] { currentVPP });
+                mi.Invoke(customVppProvider, new object[] { currentVpp });
 
                 //Finally replace the top level provider to ensure it receives requests for each and every file
-                fi.SetValue(hostingEnvironmentInstance, customVPPProvider);
+                fi.SetValue(hostingEnvironmentInstance, customVppProvider);
 
                 VirtualTemplatesCache.Reset();
             }
@@ -64,8 +64,6 @@ namespace VirtualTemplates.Core.Init
 
         public void Preload(string[] parameters) { }
 
-        public void Uninitialize(InitializationEngine context)
-        {
-        }
+        public void Uninitialize(InitializationEngine context) { }
     }
 }

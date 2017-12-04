@@ -17,6 +17,51 @@
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script type="text/javascript" src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.24.2/codemirror.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.24.2/codemirror.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.24.2/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.24.2/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.24.2/mode/css/css.min.js"></script>
+    
+    <style>
+        body > #codeContainer {
+            height: calc(100vh - 100px);
+        }
+
+        body > .panel-body .panel-body {
+            height: calc(100vh - 175px);
+        }
+
+        /*.panel-body {
+            height: 90%;
+        }
+
+        .panel-body form {
+            height: 90%;
+        }
+
+        .panel-body form .panel-default {
+            height: calc(100% - 100px);
+        }
+
+        #codepanel {
+            height: 100vh;
+        }*/
+
+        .CodeMirror {
+            height: calc(100%);
+        }
+
+        .code-wrapper {
+            margin-bottom: 0px;
+        }
+
+    /*.CodeMirror {
+            height: 100vh;
+        }*/
+    </style>
+</head>
+
 <body>
     @RenderBody()
 </body>

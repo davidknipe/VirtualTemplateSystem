@@ -4,7 +4,7 @@ namespace VirtualTemplates.Core.Impl
 {
     public class VirtualTemplatesCache
     {
-        private readonly static string _versionCacheKey = "__FastViewsCacheKey";
+        private static readonly string _versionCacheKey = "__FastViewsCacheKey";
 
         public static string VersionKey
         {
@@ -26,7 +26,7 @@ namespace VirtualTemplates.Core.Impl
 
         public static void Reset()
         {
-            VirtualTemplatesCache.VersionKey = Guid.NewGuid().ToString();
+            VersionKey = Guid.NewGuid().ToString();
         }
     }
 }

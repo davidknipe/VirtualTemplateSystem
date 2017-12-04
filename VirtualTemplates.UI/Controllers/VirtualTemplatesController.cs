@@ -1,18 +1,17 @@
 ﻿using EPiServer.Framework.Localization;
 using System.Web.Mvc;
 using VirtualTemplates.Core.Interfaces;
-using VirtualTemplates.UI.Impl;
 using VirtualTemplates.UI.Interfaces;
 using VirtualTemplates.UI.Models;
 
 namespace VirtualTemplates.UI.Controllers
 {
-    [AuthoriseUI]
+    [AuthoriseUi]
     public class VirtualTemplatesController : Controller
     {
-        private ITemplatePersistenceService _viewPersistenceService;
-        private LocalizationService _localizationService;
-        private IUITemplateLister _uITemplateLister;
+        private readonly ITemplatePersistenceService _viewPersistenceService;
+        private readonly LocalizationService _localizationService;
+        private readonly IUITemplateLister _uITemplateLister;
 
         public VirtualTemplatesController(
               ITemplatePersistenceService viewPersistenceService

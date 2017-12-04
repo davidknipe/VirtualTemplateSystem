@@ -12,8 +12,8 @@ namespace VirtualTemplates.Core.Init
     {
         public void ConfigureContainer(ServiceConfigurationContext context)
         {
-            context.Container.Configure(x => { x.For<ITemplatePersistenceService>().Use<TemplatePersistenceService>(); });
-            context.Container.Configure(x => { x.For<IPhysicalFileLister>().Use<PhysicalFileLister>(); });
+            context.StructureMap().Configure(x => { x.For<ITemplatePersistenceService>().Use<TemplatePersistenceService>(); });
+            context.StructureMap().Configure(x => { x.For<IPhysicalFileLister>().Use<PhysicalFileLister>(); });
         }
 
         public void Initialize(InitializationEngine context) { }
