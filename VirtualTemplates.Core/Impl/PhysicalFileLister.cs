@@ -8,11 +8,11 @@ namespace VirtualTemplates.Core.Impl
 {
     public class PhysicalFileLister : IPhysicalFileLister
     {
-        public IEnumerable<string> ListPhysicalFiles()
-        {
-            return this.ListPhysicalFiles(HostingEnvironment.ApplicationPhysicalPath, new List<string>() { "*.cshtml", "*.css", "*.js" });
-        }
+        /// <inheritdoc />
+        public IEnumerable<string> ListPhysicalFiles() 
+            => ListPhysicalFiles(HostingEnvironment.ApplicationPhysicalPath, new List<string>() { "*.cshtml", "*.css", "*.js" });
 
+        /// <inheritdoc />
         public IEnumerable<string> ListPhysicalFiles(string path, IList<string> searchPattern)
         {
             var results = new List<string>();
@@ -27,10 +27,7 @@ namespace VirtualTemplates.Core.Impl
             return results.OrderBy(x => x);
         }
 
-        public IEnumerable<string> ListPhysicalFiles(string path, string searchPattern)
-        {
-            return this.ListPhysicalFiles(path, new List<string> { searchPattern });
-        }
-
+        public IEnumerable<string> ListPhysicalFiles(string path, string searchPattern) 
+            => ListPhysicalFiles(path, new List<string> { searchPattern });
     }
 }

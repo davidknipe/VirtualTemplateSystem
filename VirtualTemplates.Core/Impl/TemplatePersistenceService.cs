@@ -1,6 +1,7 @@
 ﻿using EPiServer.Data.Dynamic;
 using System.Collections.Generic;
 using System.Linq;
+using EPiServer.Framework.Cache;
 using VirtualTemplates.Core.Interfaces;
 
 namespace VirtualTemplates.Core.Impl
@@ -8,34 +9,55 @@ namespace VirtualTemplates.Core.Impl
     public class TemplatePersistenceService : ITemplatePersistenceService
     {
         private static readonly string _registeredViewsCacheKey = "__TemplatePersistenceService_RegisteredViews";
+        private readonly IVirtualTemplatesCache _virtualTemplatesCache;
+        private readonly ISynchronizedObjectInstanceCache _cache;
+
+
+        public TemplatePersistenceService(IVirtualTemplatesCache virtualTemplatesCache, ISynchronizedObjectInstanceCache cache)
+        {
+            _virtualTemplatesCache = virtualTemplatesCache;
+            _cache = cache;
+        }
 
         private HashSet<string> RegisteredViews
         {
             get
             {
-                //Backed onto EPiServer cache manager to ensure muliple instances share the same HashSet
-                lock (this)
-                {
-                    if (EPiServer.CacheManager.Get(_registeredViewsCacheKey) == null)
+                //Backed onto Episerver cache manager to ensure muliple instances share the same HashSet
+                return _cache.ReadThrough(
+                    _registeredViewsCacheKey,
+                    () =>
                     {
-                        lock (this)
-                        {
-                            var cacheVal = new HashSet<string>();
-                            this.ListAllRegisteredViews().ToList().ForEach(x => cacheVal.Add(x.ToLower()));
-                            EPiServer.CacheManager.Insert(_registeredViewsCacheKey, cacheVal);
-                            return cacheVal;
-                        }
-                    }
-                }
-                lock (this)
-                {
-                    return (HashSet<string>)EPiServer.CacheManager.Get(_registeredViewsCacheKey);
-                }
+                        var cacheVal = new HashSet<string>();
+                        this.ListAllRegisteredViews().ToList().ForEach(x => cacheVal.Add(x.ToLower()));
+                        EPiServer.CacheManager.Insert(_registeredViewsCacheKey, cacheVal);
+                        return cacheVal;
+                    },
+                    ReadStrategy.Wait);
+
+                //lock (this)
+                //{
+
+                //    if (_cache.Get(_registeredViewsCacheKey) == null)
+                //    {
+                //        lock (this)
+                //        {
+                //            var cacheVal = new HashSet<string>();
+                //            this.ListAllRegisteredViews().ToList().ForEach(x => cacheVal.Add(x.ToLower()));
+                //            EPiServer.CacheManager.Insert(_registeredViewsCacheKey, cacheVal);
+                //            return cacheVal;
+                //        }
+                //    }
+                //}
+                //lock (this)
+                //{
+                //    return (HashSet<string>)EPiServer.CacheManager.Get(_registeredViewsCacheKey);
+                //}
             }
-            set
-            {
-                EPiServer.CacheManager.Insert(_registeredViewsCacheKey, value);
-            }
+            //set
+            //{
+            //    _cache.Insert(_registeredViewsCacheKey, value, CacheEvictionPolicy.Empty);
+            //}
         }
 
         public bool Exists(string virtualPath)
@@ -51,10 +73,8 @@ namespace VirtualTemplates.Core.Impl
             {
                 return new VirtualTemplate(virtualPath, data.FileData);
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         public bool SaveViewFile(string virtualPath, byte[] fileData)
@@ -76,7 +96,7 @@ namespace VirtualTemplates.Core.Impl
                 if (result != null)
                 {
                     fileDataStore.Delete(result);
-                    this.ResetState();
+                    ResetState();
                     return true;
                 }
                 return false;
@@ -130,7 +150,7 @@ namespace VirtualTemplates.Core.Impl
         {
             lock (this)
             {
-                VirtualTemplatesCache.Reset();
+                _virtualTemplatesCache.Reset();
                 EPiServer.CacheManager.Remove(_registeredViewsCacheKey);
             }
         }

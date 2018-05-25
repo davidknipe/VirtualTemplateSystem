@@ -7,23 +7,23 @@
 }
 
 @Html.Raw(EPiServer.Shell.Navigation.MenuHelper.CreateGlobalMenu("/global", "/global/templates/edit"))
-<div class="panel-body">
+<div class="panel-body" id="codeContainer">
 
     @using (Html.BeginForm())
     {
         <p>
-            <a href="@Url.Action("Index")" class="btn btn-sm btn-default">Cancel</a>
             <button type="submit" value="Save" class="btn btn-sm btn-success">@Html.TranslateFallback("/virtualtemplatesystem/buttons/save", "Save")</button>
+            <a href="@Url.Action("Index")" class="btn btn-sm btn-default">Cancel</a>
         </p>
 
         @Html.HiddenFor(m => Model.VirtualPath)
-        <div class="panel panel-default" >
+        <div class="panel panel-default code-wrapper" >
             <div class="panel-heading">
                 <h3 class="panel-title">@Model.VirtualPath</h3>
             </div>
-            <div class="panel-body" id="codepanel" style="height:100vh; width:100vh;">
+            <div class="panel-body" id="codepanel" > @*style="height:100vh; width:100vh;"*@
 
-                @Html.TextAreaFor(m => Model.TemplateContents, new { @style = "height:100vh;width:100vh;" })
+                @Html.TextAreaFor(m => Model.TemplateContents) @*, new { @style = "height:100vh;width:100vh;" }*@
 
             </div>
         </div>
@@ -42,5 +42,7 @@
         readonly: false,
         mode: "javascript"
     });
+
+    //CodeMirror.setSize("100%", "100%");
 
 </script>

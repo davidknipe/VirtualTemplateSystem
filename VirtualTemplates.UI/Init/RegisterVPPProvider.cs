@@ -1,29 +1,41 @@
-﻿using EPiServer.Framework;
-using EPiServer.Framework.Initialization;
-using System;
+﻿using System;
 using System.Reflection;
 using System.Web.Hosting;
+using EPiServer.Framework;
+using EPiServer.Framework.Initialization;
+using EPiServer.Initialization;
+using EPiServer.ServiceLocation;
+using EPiServer.UI;
 using VirtualTemplates.Core.Impl;
+using VirtualTemplates.Core.Interfaces;
 using VirtualTemplates.Core.Providers;
 
-namespace VirtualTemplates.Core.Init
+namespace VirtualTemplates.UI.Init
 {
     [InitializableModule]
+    [ModuleDependency(typeof(FrameworkAspNetInitialization))]
+    [ModuleDependency(typeof(CmsCoreInitialization))]
     [ModuleDependency(typeof(EPiServer.Web.InitializationModule))]
+    [ModuleDependency(typeof(EPiServerUIInitialization))]
+    [ModuleDependency(typeof(EPiServer.Cms.Shell.InitializableModule))]
     public class RegisterVppProvider : IInitializableModule
     {
         private bool _registered;
+#pragma warning disable 649
+        private readonly Injected<IVirtualTemplatesCache> _virtualTemplatesCache;
+#pragma warning restore 649
 
+        /// <inheritdoc />
         public void Initialize(InitializationEngine context)
         {
             if (!_registered)
             {
-                RegisterVPPProviderAtTopOfList();
+                RegisterVppProviderAtTopOfList();
                 _registered = true;
             }
         }
 
-        private void RegisterVPPProviderAtTopOfList()
+        private void RegisterVppProviderAtTopOfList()
         {
             try
             {
@@ -32,16 +44,19 @@ namespace VirtualTemplates.Core.Init
                 //Note: Requires FULL trust ASP.net permissions
 
                 //Get static hosting environment instance
-                HostingEnvironment hostingEnvironmentInstance = (HostingEnvironment)typeof(HostingEnvironment).InvokeMember("_theHostingEnvironment", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, null, null);
+                var hostingEnvironmentInstance = (HostingEnvironment)typeof(HostingEnvironment).InvokeMember("_theHostingEnvironment", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetField, null, null, null);
                 if (hostingEnvironmentInstance == null)
                     return;
 
                 //Get Virtual path provider private field
-                FieldInfo fi = typeof(HostingEnvironment).GetField("_virtualPathProvider", BindingFlags.NonPublic | BindingFlags.Instance);
-                VirtualPathProvider currentVpp = (VirtualPathProvider)fi.GetValue(hostingEnvironmentInstance);
+                var fi = typeof(HostingEnvironment).GetField("_virtualPathProvider", BindingFlags.NonPublic | BindingFlags.Instance);
+                if (fi == null)
+                    return;
+
+                var currentVpp = (VirtualPathProvider)fi.GetValue(hostingEnvironmentInstance);
 
                 var customVppProvider = new VirtualTemplatesVirtualPathProvider();
-                MethodInfo mi = typeof(VirtualPathProvider).GetMethod("Initialize", BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(VirtualPathProvider) }, null);
+                var mi = typeof(VirtualPathProvider).GetMethod("Initialize", BindingFlags.NonPublic | BindingFlags.Instance, null, new[] { typeof(VirtualPathProvider) }, null);
                 if (mi == null)
                     return;
 
@@ -54,7 +69,7 @@ namespace VirtualTemplates.Core.Init
                 //Finally replace the top level provider to ensure it receives requests for each and every file
                 fi.SetValue(hostingEnvironmentInstance, customVppProvider);
 
-                VirtualTemplatesCache.Reset();
+                _virtualTemplatesCache.Service.Reset();
             }
             catch (Exception ex)
             {

@@ -11,23 +11,17 @@ namespace VirtualTemplates.Core.Impl
         {
             get
             {
-                using (var sr = new StreamReader(this.Open()))
+                using (var sr = new StreamReader(Open()))
                 {
                     return sr.ReadToEnd();
                 }
             }
         }
 
-        public VirtualTemplate(string virtualPath, byte[] FileData)
-            : base(virtualPath)
-        {
-            this._data = FileData;
-        }
+        public VirtualTemplate(string virtualPath, byte[] fileData)
+            : base(virtualPath) => _data = fileData;
 
-        public override System.IO.Stream Open()
-        {
-            return new MemoryStream(_data);
-        }
+        public override Stream Open() => new MemoryStream(_data);
     }
 
 }

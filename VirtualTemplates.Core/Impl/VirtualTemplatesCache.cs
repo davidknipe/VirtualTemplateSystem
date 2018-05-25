@@ -1,30 +1,38 @@
 ﻿using System;
+using EPiServer.Framework.Cache;
+using VirtualTemplates.Core.Interfaces;
 
 namespace VirtualTemplates.Core.Impl
 {
-    public class VirtualTemplatesCache
+    public class VirtualTemplatesCache : IVirtualTemplatesCache
     {
         private static readonly string _versionCacheKey = "__FastViewsCacheKey";
+        private readonly ISynchronizedObjectInstanceCache _cache;
 
-        public static string VersionKey
+        public VirtualTemplatesCache(ISynchronizedObjectInstanceCache cache)
+        {
+            _cache = cache;
+        }
+
+        public string VersionKey
         {
             get
             {
-                if (EPiServer.CacheManager.Get(_versionCacheKey) == null)
+                if (_cache.Get(_versionCacheKey) == null)
                 {
                     var cacheVal = Guid.NewGuid().ToString();
                     EPiServer.CacheManager.Insert(_versionCacheKey, cacheVal);
                     return cacheVal;
                 }
-                return EPiServer.CacheManager.Get(_versionCacheKey).ToString();
+                return _cache.Get(_versionCacheKey).ToString();
             }
             private set
             {
-                EPiServer.CacheManager.Insert(_versionCacheKey, value);
+                _cache.Insert(_versionCacheKey, value, CacheEvictionPolicy.Empty);
             }
         }
 
-        public static void Reset()
+        public void Reset()
         {
             VersionKey = Guid.NewGuid().ToString();
         }

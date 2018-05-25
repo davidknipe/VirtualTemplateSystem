@@ -1,10 +1,10 @@
-﻿using EPiServer.Security;
-using System;
+﻿using System;
 using System.Web.Mvc;
+using EPiServer.Security;
 
 namespace VirtualTemplates.UI
 {
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, Inherited = true, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = true)]
     public class AuthoriseUiAttribute : FilterAttribute, IAuthorizationFilter
     {
         public void OnAuthorization(AuthorizationContext filterContext)
