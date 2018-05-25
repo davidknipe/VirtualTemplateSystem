@@ -29,8 +29,7 @@ namespace VirtualTemplates.Core.Impl
                     () =>
                     {
                         var cacheVal = new HashSet<string>();
-                        this.ListAllRegisteredViews().ToList().ForEach(x => cacheVal.Add(x.ToLower()));
-                        EPiServer.CacheManager.Insert(_registeredViewsCacheKey, cacheVal);
+                        ListAllRegisteredViews().ToList().ForEach(x => cacheVal.Add(x.ToLower()));
                         return cacheVal;
                     },
                     ReadStrategy.Wait);
@@ -105,7 +104,7 @@ namespace VirtualTemplates.Core.Impl
 
         public IEnumerable<string> ListAllRegisteredViews()
         {
-            IList<string> viewList = new List<string>();
+            var viewList = new List<string>();
             using (var fileDataStore = typeof(VirtualTemplateData).GetStore())
             {
                 // Look up the content in the DDS
@@ -151,7 +150,7 @@ namespace VirtualTemplates.Core.Impl
             lock (this)
             {
                 _virtualTemplatesCache.Reset();
-                EPiServer.CacheManager.Remove(_registeredViewsCacheKey);
+                _cache.Remove(_registeredViewsCacheKey);
             }
         }
     }

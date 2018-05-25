@@ -21,7 +21,7 @@ namespace VirtualTemplates.Core.Impl
                 if (_cache.Get(_versionCacheKey) == null)
                 {
                     var cacheVal = Guid.NewGuid().ToString();
-                    EPiServer.CacheManager.Insert(_versionCacheKey, cacheVal);
+                    _cache.Insert(_versionCacheKey, cacheVal, CacheEvictionPolicy.Empty);
                     return cacheVal;
                 }
                 return _cache.Get(_versionCacheKey).ToString();
