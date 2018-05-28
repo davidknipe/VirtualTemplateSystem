@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>VirtualTemplateSystem</id>
-    <version>1.2.16</version>
+    <version>1.2.17</version>
     <description>Virtual Template System for Episerver allows users to view and modify templates from the Episerver UI</description>
     <authors>David Knipe</authors>
     <owners>David Knipe</owners>

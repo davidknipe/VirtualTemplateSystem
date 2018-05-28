@@ -21,28 +21,21 @@
             <div class="panel-heading">
                 <h3 class="panel-title">@Model.VirtualPath</h3>
             </div>
-            <div class="panel-body" id="codepanel" > @*style="height:100vh; width:100vh;"*@
-
-                @Html.TextAreaFor(m => Model.TemplateContents) @*, new { @style = "height:100vh;width:100vh;" }*@
-
-            </div>
+            <div class="panel-body" id="codepanel">@Html.TextAreaFor(m => Model.TemplateContents)</div>
         </div>
     }
 
 </div>
 
-<script language="javascript">
+<script>
+    function getModeByFileExtension(path){
+        var modelist = ace.require("ace/ext/modelist");
+        return modelist.getModeForPath(path).mode;
+    }
 
-
-    var templateText = document.getElementById('TemplateContents');
-
-    var myCodeMirror = CodeMirror.fromTextArea(templateText, {
-        value: "function myScript(){return 100;}\n",
-        lineNumbers: true,
-        readonly: false,
-        mode: "javascript"
-    });
-
-    //CodeMirror.setSize("100%", "100%");
-
+    var filename = "@Model.VirtualPath";
+    var editor = ace.edit("codepanel");
+    var mode = getModeByFileExtension(filename);
+    ace.require(mode);
+    editor.session.setMode(mode);
 </script>
