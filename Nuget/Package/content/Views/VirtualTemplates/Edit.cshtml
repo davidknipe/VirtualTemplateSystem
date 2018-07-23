@@ -6,7 +6,6 @@
     Layout = "_VirtualTemplatesRoot.cshtml";
 }
 
-@Html.Raw(EPiServer.Shell.Navigation.MenuHelper.CreateGlobalMenu("/global", "/global/templates/edit"))
 <div class="panel-body" id="codeContainer">
 
     @using (Html.BeginForm())
@@ -17,32 +16,34 @@
         </p>
 
         @Html.HiddenFor(m => Model.VirtualPath)
-        <div class="panel panel-default code-wrapper" >
+        <div class="panel panel-default code-wrapper">
             <div class="panel-heading">
                 <h3 class="panel-title">@Model.VirtualPath</h3>
             </div>
-            <div class="panel-body" id="codepanel" > @*style="height:100vh; width:100vh;"*@
 
-                @Html.TextAreaFor(m => Model.TemplateContents) @*, new { @style = "height:100vh;width:100vh;" }*@
+            <div class="panel-body" id="codepanel">@Html.TextAreaFor(m => Model.TemplateContents)</div>
 
-            </div>
         </div>
+        @Html.HiddenFor(m => Model.TemplateContents)
     }
 
 </div>
 
-<script language="javascript">
+<script>
+    function getModeByFileExtension(path){
+        var modelist = ace.require("ace/ext/modelist");
+        return modelist.getModeForPath(path).mode;
+    }
 
-
-    var templateText = document.getElementById('TemplateContents');
-
-    var myCodeMirror = CodeMirror.fromTextArea(templateText, {
-        value: "function myScript(){return 100;}\n",
-        lineNumbers: true,
-        readonly: false,
-        mode: "javascript"
+    var filename = "@Model.VirtualPath";
+    var editor = ace.edit("codepanel");
+    var mode = getModeByFileExtension(filename);
+    ace.require(mode);
+    editor.setOptions({
+        fontSize: "12px"
     });
-
-    //CodeMirror.setSize("100%", "100%");
-
+    editor.session.setMode(mode);
+    editor.getSession().on('change', function (e) {
+        document.getElementById("TemplateContents").value = editor.getValue();
+    });
 </script>

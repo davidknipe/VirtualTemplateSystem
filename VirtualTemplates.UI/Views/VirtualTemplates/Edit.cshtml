@@ -6,7 +6,6 @@
     Layout = "_VirtualTemplatesRoot.cshtml";
 }
 
-@Html.Raw(EPiServer.Shell.Navigation.MenuHelper.CreateGlobalMenu("/global", "/global/templates/edit"))
 <div class="panel-body" id="codeContainer">
 
     @using (Html.BeginForm())
@@ -17,12 +16,15 @@
         </p>
 
         @Html.HiddenFor(m => Model.VirtualPath)
-        <div class="panel panel-default code-wrapper" >
+        <div class="panel panel-default code-wrapper">
             <div class="panel-heading">
                 <h3 class="panel-title">@Model.VirtualPath</h3>
             </div>
+
             <div class="panel-body" id="codepanel">@Html.TextAreaFor(m => Model.TemplateContents)</div>
+
         </div>
+        @Html.HiddenFor(m => Model.TemplateContents)
     }
 
 </div>
@@ -37,5 +39,11 @@
     var editor = ace.edit("codepanel");
     var mode = getModeByFileExtension(filename);
     ace.require(mode);
+    editor.setOptions({
+        fontSize: "12px"
+    });
     editor.session.setMode(mode);
+    editor.getSession().on('change', function (e) {
+        document.getElementById("TemplateContents").value = editor.getValue();
+    });
 </script>

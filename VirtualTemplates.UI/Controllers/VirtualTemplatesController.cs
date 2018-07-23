@@ -73,7 +73,7 @@ namespace VirtualTemplates.UI.Controllers
             if (this._viewPersistenceService.DeleteViewFile(VirtualPath))
             {
                 viewModel = this.PopulateViewModel(ShowAllTemplates);
-                var confirmMessage = _localizationService.GetString("/virtualtemplatesystem/messages/deleteconfirm", "Template: <strong>{0}</strong> successfully deleted repository");
+                var confirmMessage = _localizationService.GetString("/virtualtemplatesystem/messages/deleteconfirm", "Template: <strong>{0}</strong> successfully removed from online repository");
                 viewModel.ConfirmMessage = string.Format(confirmMessage, VirtualPath);
             }
             else
@@ -100,7 +100,7 @@ namespace VirtualTemplates.UI.Controllers
             {
                 viewModel = this.PopulateViewModel(ShowAllTemplates);
                 viewModel.LastActionPath = VirtualPath;
-                var confirmMessage = _localizationService.GetString("/virtualtemplatesystem/messages/saveconfirm", "Template: <strong>{0}</strong> successfully saved to template repository");
+                var confirmMessage = _localizationService.GetString("/virtualtemplatesystem/messages/saveconfirm", "Template: <strong>{0}</strong> successfully saved");
                 viewModel.ConfirmMessage = string.Format(confirmMessage, VirtualPath);
             }
             else

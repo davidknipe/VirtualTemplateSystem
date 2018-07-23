@@ -60,6 +60,7 @@
 </head>
 
 <body>
+    @Html.Raw(EPiServer.Shell.Navigation.MenuHelper.CreateGlobalMenu("/global", "/global/cms/templates"))
     @RenderBody()
 </body>
 </html>

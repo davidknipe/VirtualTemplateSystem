@@ -28,17 +28,18 @@ namespace VirtualTemplates.UI
 
         public IEnumerable<MenuItem> GetMenuItems()
         {
-            var section = new SectionMenuItem(
-                _localizationService.GetString("/virtualtemplatesystem/menus/mainmenu", "Templates"),
-                "/global/templates") {SortIndex = 999};
+            //var section = new SectionMenuItem(
+            //    _localizationService.GetString("/virtualtemplatesystem/menus/mainmenu", "Templates"),
+            //    "/global/templates") {SortIndex = 999};
 
-            var editMenu = new UrlMenuItem(_localizationService.GetString("/virtualtemplatesystem/menus/edit", "Edit"), "/global/templates/edit", "/" + RootUiUrl + "VirtualTemplates");
+            var editMenu = new UrlMenuItem(_localizationService.GetString("/virtualtemplatesystem/menus/edit", "Templates"), "/global/cms/templates", "/" + RootUiUrl + "VirtualTemplates");
             editMenu.IsAvailable = (request) => IsTemplateEditor;
+            editMenu.SortIndex = int.MaxValue;
 
             var list = new List<MenuItem>();
             if (this.IsTemplateEditor)
             {
-                list.Add(section);
+                //list.Add(section);
                 list.Add(editMenu);
             }
             return list;

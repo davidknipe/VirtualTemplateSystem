@@ -6,8 +6,6 @@
     Layout = "_VirtualTemplatesRoot.cshtml";
 }
 
-@Html.Raw(EPiServer.Shell.Navigation.MenuHelper.CreateGlobalMenu("/global", "/global/templates/edit"))
-
 <div class="panel-body">
 
     @if (!String.IsNullOrEmpty(Model.ConfirmMessage))
@@ -33,13 +31,13 @@
     <span class="radio inline">
         @Html.RadioButtonFor(model => model.ShowAllTemplates, false, new { @onclick = "document.location.href = '" + @Url.Action("List", new { ShowAllTemplates = false }) + "'; " })
         <a href="@Url.Action("List", new { ShowAllTemplates = false })" style="color: black;">
-            @Html.TranslateFallback("/virtualtemplatesystem/filters/templatessavedinrespository", "Saved in respository")
+            @Html.TranslateFallback("/virtualtemplatesystem/filters/templatessavedinrespository", "Edited online")
         </a>
     </span>
     <span class="radio inline">
         @Html.RadioButtonFor(model => model.ShowAllTemplates, true, new { @onclick = "document.location.href = '" + @Url.Action("List", new { ShowAllTemplates = true }) + "'; " })
         <a href="@Url.Action("List", new { ShowAllTemplates = true })" style="color: black;">
-            @Html.TranslateFallback("/virtualtemplatesystem/filters/showalltemplates", "Show all (including those on disk)")
+            @Html.TranslateFallback("/virtualtemplatesystem/filters/showalltemplates", "Show all available templates")
         </a>
     </span>
     <hr />
@@ -64,7 +62,7 @@
                         @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/view", "View"), "Display", new { VirtualPath = @item.FilePath, ShowAllTemplates = @Model.ShowAllTemplates }, new { @class = "btn btn-sm btn-default" })
                         @if (!item.IsVirtual)
                         {
-                            @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/makevirtual", "Make Virtual"), "MakeVirtual", new { VirtualPath = @item.FilePath, ShowAllTemplates = true }, new { @class = "btn btn-sm btn-default" })
+                            @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/makevirtual", "Make Editable"), "MakeVirtual", new { VirtualPath = @item.FilePath, ShowAllTemplates = true }, new { @class = "btn btn-sm btn-default" })
                         }
                         @if (item.IsVirtual)
                         {
