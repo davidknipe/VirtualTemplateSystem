@@ -177,6 +177,7 @@
   <ItemGroup>
     <Compile Include="Controllers\VirtualTemplatesController.cs" />
     <Compile Include="DTO\UITemplate.cs" />
+    <Compile Include="Filter\AddXssHeader.cs" />
     <Compile Include="Init\RegisterImplementations.cs" />
     <Compile Include="Init\RegisterVPPProvider.cs" />
     <Compile Include="Interfaces\IUITemplateLister.cs" />

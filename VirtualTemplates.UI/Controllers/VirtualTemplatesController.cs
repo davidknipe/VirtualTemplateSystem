@@ -1,11 +1,13 @@
 ﻿using EPiServer.Framework.Localization;
 using System.Web.Mvc;
 using VirtualTemplates.Core.Interfaces;
+using VirtualTemplates.UI.Filter;
 using VirtualTemplates.UI.Interfaces;
 using VirtualTemplates.UI.Models;
 
 namespace VirtualTemplates.UI.Controllers
 {
+    [AddXssHeader]
     [AuthoriseUi]
     public class VirtualTemplatesController : Controller
     {

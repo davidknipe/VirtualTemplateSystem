@@ -2,9 +2,9 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>VirtualTemplateSystem</id>
-    <version>2.0.1</version>
+    <version>2.0.3</version>
     <description>Virtual Template System for Episerver allows users to view and modify templates from the Episerver UI</description>
-    <releaseNotes>Episerver 11 compatibility</releaseNotes>
+    <releaseNotes>Stop XSS warnings in Chrome</releaseNotes>
     <iconUrl>https://www.david-tec.com/global/media/virtualtemplatesystem/vtsicon.png?v2.0.0</iconUrl>
     <authors>David Knipe</authors>
     <owners>David Knipe</owners>
