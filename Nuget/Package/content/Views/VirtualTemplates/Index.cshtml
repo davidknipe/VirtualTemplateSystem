@@ -67,8 +67,10 @@
                         @if (item.IsVirtual)
                         {
                             @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/edit", "Edit"), "Edit", new { VirtualPath = @item.FilePath, ShowAllTemplates = @Model.ShowAllTemplates }, new { @class = "btn btn-sm btn-default" })
-                            @Html.Raw("&nbsp")
+                            @Html.Raw("&nbsp;")
                             @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/delete", "Revert to default"), "Delete", new { VirtualPath = @item.FilePath, ShowAllTemplates = @Model.ShowAllTemplates }, new { @class = "btn btn-sm btn-default", @onclick = "return confirm('" + @Html.TranslateFallback("/virtualtemplatesystem/messages/deleteconfirmprompt", "Are you sure you want to revert to the default implementation? This action cannot be undone and the template will be removed from the repository.") + "');" })
+                            @Html.Raw("&nbsp;")
+                            @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/compare", "Compare"), "Compare", new { VirtualPath = @item.FilePath, ShowAllTemplates = @Model.ShowAllTemplates }, new { @class = "btn btn-sm btn-default" })
                         }
                     </p>
                 </td>

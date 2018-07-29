@@ -171,6 +171,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interfaces\ITemplatePersistenceService.cs" />
     <Compile Include="Interfaces\IVirtualTemplatesCache.cs" />
     <Compile Include="Impl\VirtualTemplateData.cs" />
     <Compile Include="Impl\VirtualTemplate.cs" />
@@ -178,7 +179,6 @@
     <Compile Include="Impl\VirtualTemplatesCache.cs" />
     <Compile Include="Interfaces\IPhysicalFileLister.cs" />
     <Compile Include="Init\RegisterImplementations.cs" />
-    <Compile Include="Interfaces\IViewPersistenceService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\VirtualTemplatesVirtualPathProvider.cs" />
     <Compile Include="Impl\TemplatePersistenceService.cs" />

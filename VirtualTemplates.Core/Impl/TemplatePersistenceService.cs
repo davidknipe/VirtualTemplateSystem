@@ -33,30 +33,7 @@ namespace VirtualTemplates.Core.Impl
                         return cacheVal;
                     },
                     ReadStrategy.Wait);
-
-                //lock (this)
-                //{
-
-                //    if (_cache.Get(_registeredViewsCacheKey) == null)
-                //    {
-                //        lock (this)
-                //        {
-                //            var cacheVal = new HashSet<string>();
-                //            this.ListAllRegisteredViews().ToList().ForEach(x => cacheVal.Add(x.ToLower()));
-                //            EPiServer.CacheManager.Insert(_registeredViewsCacheKey, cacheVal);
-                //            return cacheVal;
-                //        }
-                //    }
-                //}
-                //lock (this)
-                //{
-                //    return (HashSet<string>)EPiServer.CacheManager.Get(_registeredViewsCacheKey);
-                //}
             }
-            //set
-            //{
-            //    _cache.Insert(_registeredViewsCacheKey, value, CacheEvictionPolicy.Empty);
-            //}
         }
 
         public bool Exists(string virtualPath)

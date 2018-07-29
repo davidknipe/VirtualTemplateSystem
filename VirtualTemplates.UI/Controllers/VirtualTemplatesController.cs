@@ -48,7 +48,8 @@ namespace VirtualTemplates.UI.Controllers
                 {
                     IsVirtual = _viewPersistenceService.Exists(VirtualPath),
                     VirtualPath = VirtualPath,
-                    TemplateContents = isVirtual ? _viewPersistenceService.GetViewFile(VirtualPath).FileContents : System.IO.File.ReadAllText(this.Server.MapPath("~" + VirtualPath))
+                    TemplateContents = isVirtual ? _viewPersistenceService.GetViewFile(VirtualPath).FileContents : System.IO.File.ReadAllText(this.Server.MapPath("~" + VirtualPath)),
+                    ShowAllTemplates =  ShowAllTemplates
                 });
         }
 
@@ -59,7 +60,8 @@ namespace VirtualTemplates.UI.Controllers
                 {
                     IsVirtual = true,
                     VirtualPath = VirtualPath,
-                    TemplateContents = _viewPersistenceService.GetViewFile(VirtualPath).FileContents
+                    TemplateContents = _viewPersistenceService.GetViewFile(VirtualPath).FileContents,
+                    ShowAllTemplates = ShowAllTemplates
                 });
         }
 
@@ -67,6 +69,42 @@ namespace VirtualTemplates.UI.Controllers
         public ActionResult Edit(VirtualTemplatesEditModel model)
         {
             return View("Index", this.SaveTemplate(false, model.VirtualPath, System.Text.Encoding.UTF8.GetBytes(model.TemplateContents)));            
+        }
+
+        [HttpPost]
+        public ActionResult Compare(VirtualTemplatesCompareModel model)
+        {
+            return View("Index", SaveTemplate(false, model.VirtualPath, System.Text.Encoding.UTF8.GetBytes(model.TemplateContents)));
+        }
+
+        public ActionResult Compare(string VirtualPath, bool ShowAllTemplates)
+        {
+            return View(
+                new VirtualTemplatesCompareModel()
+                {
+                    IsVirtual = true,
+                    VirtualPath = VirtualPath,
+                    TemplateContents = _viewPersistenceService.GetViewFile(VirtualPath).FileContents,
+                    OriginalContents = GetFileContents(VirtualPath)
+                });
+        }
+
+        public ActionResult CompareDisplay(string VirtualPath, bool ShowAllTemplates)
+        {
+            return View(
+                new VirtualTemplatesCompareModel()
+                {
+                    IsVirtual = true,
+                    VirtualPath = VirtualPath,
+                    TemplateContents = _viewPersistenceService.GetViewFile(VirtualPath).FileContents,
+                    OriginalContents = GetFileContents(VirtualPath)
+                });
+        }
+
+        private string GetFileContents(string VirtualPath)
+        {
+            return System.Text.Encoding.Default.GetString(
+                System.IO.File.ReadAllBytes(Server.MapPath("~" + VirtualPath)));
         }
 
         public ActionResult Delete(string VirtualPath, bool ShowAllTemplates)

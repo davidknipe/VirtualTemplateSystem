@@ -13,6 +13,7 @@
         <p>
             <button type="submit" value="Save" class="btn btn-sm btn-success">@Html.TranslateFallback("/virtualtemplatesystem/buttons/save", "Save")</button>
             <a href="@Url.Action("Index")" class="btn btn-sm btn-default">Cancel</a>
+            @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/compare", "Compare"), "Compare", new { VirtualPath = @Model.VirtualPath, ShowAllTemplates = @Model.ShowAllTemplates }, new { @class = "btn btn-sm btn-default" })
         </p>
 
         @Html.HiddenFor(m => Model.VirtualPath)
