@@ -1,4 +1,4 @@
-Virtual Template System for EPiServer
+Virtual Template System for Episerver
 =====================================
 
 Virtual Template system for Episerver allows editors to edit templates in the Episerver UI without the need for a release. 
