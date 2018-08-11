@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+
 namespace VirtualTemplates.Core.Interfaces
 {
     public interface IPhysicalFileLister

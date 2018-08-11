@@ -171,21 +171,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Interfaces\ITemplatePersistenceService.cs" />
+    <Compile Include="Interfaces\IPhysicalFileReader.cs" />
+    <Compile Include="Impl\PhysicalFileReader.cs" />
+    <Compile Include="Models\UiTemplate.cs" />
+    <Compile Include="Init\ContentEventsInit.cs" />
+    <Compile Include="Models\VirtualTemplateContentBase.cs" />
+    <Compile Include="Init\VirtualTemplateRootInit.cs" />
+    <Compile Include="Interfaces\IVirtualTemplateRepository.cs" />
     <Compile Include="Interfaces\IVirtualTemplatesCache.cs" />
-    <Compile Include="Impl\VirtualTemplateData.cs" />
     <Compile Include="Impl\VirtualTemplate.cs" />
     <Compile Include="Impl\PhysicalFileLister.cs" />
     <Compile Include="Impl\VirtualTemplatesCache.cs" />
     <Compile Include="Interfaces\IPhysicalFileLister.cs" />
     <Compile Include="Init\RegisterImplementations.cs" />
+    <Compile Include="Models\VirtualTemplateContent.cs" />
+    <Compile Include="Models\VirtualTemplateRoot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\VirtualTemplatesVirtualPathProvider.cs" />
-    <Compile Include="Impl\TemplatePersistenceService.cs" />
+    <Compile Include="Impl\VirtualTemplateRepository.cs" />
+    <Compile Include="TabNames.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Config\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

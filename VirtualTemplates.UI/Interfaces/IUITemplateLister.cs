@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using VirtualTemplates.UI.DTO;
+using VirtualTemplates.Core.Models;
 
 namespace VirtualTemplates.UI.Interfaces
 {
-    public interface IUITemplateLister
+    public interface IUiTemplateLister
     {
-        IEnumerable<UITemplate> GetViewList(bool IncludePhysicalViews);
+        IEnumerable<UiTemplate> GetViewList(bool IncludePhysicalViews);
     }
 }

@@ -1,29 +1,26 @@
 ﻿@using System.Web.Mvc.Html
-@using EPiServer.Shell.Web.Mvc.Html
 @model VirtualTemplates.UI.Models.VirtualTemplatesCompareModel
 
 @{
     Layout = "_VirtualTemplatesRoot.cshtml";
 }
 
-<div class="panel-body" id="codeContainer">
+<div class="card-body" id="codeContainer">
 
     @using (Html.BeginForm())
     {
         <p>
-            <button type="submit" value="Save" class="btn btn-sm btn-success">@Html.TranslateFallback("/virtualtemplatesystem/buttons/save", "Save")</button>
-            <a href="@Url.Action("Index")" class="btn btn-sm btn-default">Cancel</a>
-            @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/delete", "Revert to default"), "Delete", new {VirtualPath = @Model.VirtualPath, ShowAllTemplates = false}, new {@class = "btn btn-sm btn-default", @onclick = "return confirm('" + @Html.TranslateFallback("/virtualtemplatesystem/messages/deleteconfirmprompt", "Are you sure you want to revert to the default implementation? This action cannot be undone and the template will be removed from the repository.") + "');"})
+            @{ Html.RenderPartial("Buttons/Save"); }
+            @{ Html.RenderPartial("Buttons/SaveAndClose"); }
+            @{ Html.RenderPartial("Buttons/Revert"); }
         </p>
 
         @Html.HiddenFor(m => Model.VirtualPath)
-        <div class="panel panel-default code-wrapper">
-            <div class="panel-heading">
-                <h3 class="panel-title">@Model.VirtualPath (edited vs original)</h3>
-            </div>
+        <div class="card card-default code-wrapper">
+            @{ Html.RenderPartial("Shared/PanelTitle"); }
 
-            <div class="panel-body nopadding" id="codepanel">
-                <iframe class="panel-body nopadding" style="min-height: 100%; min-width: 100%; height: 100%; width: 100%" frameborder="0" src="CompareDisplay?@Request.QueryString.ToString()"></iframe>
+            <div class="card-body nopadding" id="codepanel">
+                <iframe class="card-body nopadding" style="min-height: 100%; min-width: 100%; height: 100%; width: 100%" frameborder="0" src="CompareDisplay?@Request.QueryString.ToString()"></iframe>
             </div>
 
         </div>

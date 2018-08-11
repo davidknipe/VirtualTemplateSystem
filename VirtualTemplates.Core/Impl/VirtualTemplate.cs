@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text;
 using System.Web.Hosting;
 
 namespace VirtualTemplates.Core.Impl
@@ -17,6 +18,11 @@ namespace VirtualTemplates.Core.Impl
                 }
             }
         }
+        public VirtualTemplate(string virtualPath, string fileData)
+            : base(virtualPath)
+        {
+            _data = Encoding.Default.GetBytes(fileData);
+        } 
 
         public VirtualTemplate(string virtualPath, byte[] fileData)
             : base(virtualPath) => _data = fileData;

@@ -9,18 +9,18 @@ namespace VirtualTemplates.Core.Providers
     public class VirtualTemplatesVirtualPathProvider : VirtualPathProvider
     {
 #pragma warning disable 649
-        private readonly Injected<ITemplatePersistenceService> _viewPersistenceService;
+        private readonly Injected<IVirtualTemplateRepository> _viewPersistenceService;
 #pragma warning restore 649
-#pragma warning disable 169
+#pragma warning disable 649
         private readonly Injected<IVirtualTemplatesCache> _virtualTemplatesCache;
-#pragma warning restore 169
+#pragma warning restore 649
 
 
         /// <inheritdoc />
         public VirtualTemplatesVirtualPathProvider() { }
 
         /// <inheritdoc />
-        public VirtualTemplatesVirtualPathProvider(ITemplatePersistenceService viewPersistenceService) { }
+        public VirtualTemplatesVirtualPathProvider(IVirtualTemplateRepository viewPersistenceService) { }
 
         /// <inheritdoc />
         public VirtualTemplatesVirtualPathProvider(string providerName, NameValueCollection configParameters) { }
@@ -43,7 +43,7 @@ namespace VirtualTemplates.Core.Providers
         {
             if (_viewPersistenceService.Service.Exists(virtualPath))
             {
-                VirtualFile vf = _viewPersistenceService.Service.GetViewFile(virtualPath);
+                VirtualFile vf = _viewPersistenceService.Service.GetTemplate(virtualPath);
                 return vf;
             }
 

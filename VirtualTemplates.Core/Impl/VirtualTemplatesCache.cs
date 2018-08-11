@@ -6,7 +6,7 @@ namespace VirtualTemplates.Core.Impl
 {
     public class VirtualTemplatesCache : IVirtualTemplatesCache
     {
-        private static readonly string _versionCacheKey = "__FastViewsCacheKey";
+        private static readonly string _versionCacheKey = "__VirtualTemplatesCacheKey";
         private readonly ISynchronizedObjectInstanceCache _cache;
 
         public VirtualTemplatesCache(ISynchronizedObjectInstanceCache cache)
@@ -26,15 +26,9 @@ namespace VirtualTemplates.Core.Impl
                 }
                 return _cache.Get(_versionCacheKey).ToString();
             }
-            private set
-            {
-                _cache.Insert(_versionCacheKey, value, CacheEvictionPolicy.Empty);
-            }
+            private set => _cache.Insert(_versionCacheKey, value, CacheEvictionPolicy.Empty);
         }
 
-        public void Reset()
-        {
-            VersionKey = Guid.NewGuid().ToString();
-        }
+        public void Reset() => VersionKey = Guid.NewGuid().ToString();
     }
 }

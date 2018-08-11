@@ -4,7 +4,10 @@ namespace VirtualTemplates.UI.Models
 {
     public class VirtualTemplatesCompareModel
     {
+        public string ConfirmMessage;
+
         public bool IsVirtual { get; set; }
+
         public string VirtualPath { get; set; }
 
         [AllowHtml]
@@ -13,5 +16,6 @@ namespace VirtualTemplates.UI.Models
         [AllowHtml]
         public string OriginalContents { get; set; }
 
+        public string Button { get; set; }
     }
 }

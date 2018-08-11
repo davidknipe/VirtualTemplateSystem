@@ -12,9 +12,10 @@ namespace VirtualTemplates.Core.Init
     {
         public void ConfigureContainer(ServiceConfigurationContext context)
         {
-            context.StructureMap().Configure(x => { x.For<ITemplatePersistenceService>().Use<TemplatePersistenceService>(); });
+            context.StructureMap().Configure(x => { x.For<IVirtualTemplateRepository>().Use<VirtualTemplateRepository>(); });
             context.StructureMap().Configure(x => { x.For<IPhysicalFileLister>().Use<PhysicalFileLister>(); });
             context.StructureMap().Configure(x => { x.For<IVirtualTemplatesCache>().Use<VirtualTemplatesCache>().Singleton(); });
+            context.StructureMap().Configure(x => { x.For<IPhysicalFileReader>().Use<PhysicalFileReader>(); });
         }
 
         public void Initialize(InitializationEngine context) { }

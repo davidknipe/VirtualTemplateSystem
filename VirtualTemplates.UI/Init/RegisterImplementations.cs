@@ -14,7 +14,7 @@ namespace VirtualTemplates.UI.Init
     {
         public void ConfigureContainer(ServiceConfigurationContext context)
         {
-            context.StructureMap().Configure(x => { x.For<IUITemplateLister>().Use<UITemplateLister>(); });
+            context.StructureMap().Configure(x => { x.For<IUiTemplateLister>().Use<UiTemplateLister>(); });
         }
 
         public void Initialize(InitializationEngine context) { }

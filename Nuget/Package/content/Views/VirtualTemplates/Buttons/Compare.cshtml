@@ -1,0 +1,4 @@
+﻿@using System.Web.Mvc.Html
+@using EPiServer.Shell.Web.Mvc.Html
+
+@Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/compare", "Compare"), "Compare", new { VirtualPath = @Model.VirtualPath, ShowAllTemplates = @Model.ShowAllTemplates }, new { @class = "btn btn-sm btn-primary" })

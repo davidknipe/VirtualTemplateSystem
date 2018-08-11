@@ -1,12 +1,12 @@
 ﻿@using System.Web.Mvc.Html
 @using EPiServer.Shell.Web.Mvc.Html
-@model VirtualTemplates.UI.Models.VirtualTemplatesViewModel
+@model VirtualTemplates.UI.Models.VirtualTemplatesListViewModel
 
 @{
     Layout = "_VirtualTemplatesRoot.cshtml";
 }
 
-<div class="panel-body">
+<div class="card-body">
 
     @if (!String.IsNullOrEmpty(Model.ConfirmMessage))
     {
@@ -15,7 +15,7 @@
 
             @if (!string.IsNullOrEmpty(Model.LastActionPath))
             {
-                @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/editnow", "Edit Now"), "Edit", new { VirtualPath = @Model.LastActionPath, ShowAllTemplates = @Model.ShowAllTemplates }, new { @class = "btn btn-sm btn-default" })
+                @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/editnow", "Edit Now"), "Edit", new { VirtualPath = @Model.LastActionPath, ShowAllTemplates = @Model.ShowAllTemplates }, new { @class = "btn btn-light" })
             }
 
         </div>
@@ -28,54 +28,61 @@
         </div>
     }
 
-    <span class="radio inline">
-        @Html.RadioButtonFor(model => model.ShowAllTemplates, false, new { @onclick = "document.location.href = '" + @Url.Action("List", new { ShowAllTemplates = false }) + "'; " })
-        <a href="@Url.Action("List", new { ShowAllTemplates = false })" style="color: black;">
-            @Html.TranslateFallback("/virtualtemplatesystem/filters/templatessavedinrespository", "Edited online")
-        </a>
-    </span>
-    <span class="radio inline">
-        @Html.RadioButtonFor(model => model.ShowAllTemplates, true, new { @onclick = "document.location.href = '" + @Url.Action("List", new { ShowAllTemplates = true }) + "'; " })
-        <a href="@Url.Action("List", new { ShowAllTemplates = true })" style="color: black;">
-            @Html.TranslateFallback("/virtualtemplatesystem/filters/showalltemplates", "Show all available templates")
-        </a>
-    </span>
-    <hr />
+    <div class="pb-2">
+        <span class="radio inline">
+            @Html.RadioButtonFor(model => model.ShowAllTemplates, false, new { @onclick = "document.location.href = '" + @Url.Action("List", new { ShowAllTemplates = false }) + "'; " })
+            <a href="@Url.Action("List", new { ShowAllTemplates = false })" style="color: black;">@Html.TranslateFallback("/virtualtemplatesystem/filters/templatessavedinrespository", "Edited online")</a>
+        </span>
+        <span class="radio inline">
+            @Html.RadioButtonFor(model => model.ShowAllTemplates, true, new { @onclick = "document.location.href = '" + @Url.Action("List", new { ShowAllTemplates = true }) + "'; " })
+            <a href="@Url.Action("List", new { ShowAllTemplates = true })" style="color: black;">
+                @Html.TranslateFallback("/virtualtemplatesystem/filters/showalltemplates", "Show all available templates")
+            </a>
+        </span>
+    </div>
 
     <form id="resourceFilterForm">
         <div class="form-group">
             <input type="search" value="" class="form-control search-input" placeholder="Enter Search Query" />
         </div>
     </form>
+    
+    <table id="resourceList" class="table">
 
+        <thead>
+                <tr>
+                    <th scope="col">Path</th>
+                    <th scope="col">Changed by</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
 
-    <table id="resourceList">
+            <tbody>
 
         @foreach (var item in Model.TemplateList)
-        {
+            {
             <tr class="resource">
-                <td style="padding: 5px;">
-                    <p>@item.FilePath</p>
-                </td>
+                <td class="align-middle">@item.FilePath</td>
+                <td class="align-middle">@item.ChangedBy</td>
                 <td>
-                    <p>
-                        @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/view", "View"), "Display", new { VirtualPath = @item.FilePath, ShowAllTemplates = @Model.ShowAllTemplates }, new { @class = "btn btn-sm btn-default" })
-                        @if (!item.IsVirtual)
-                        {
-                            @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/makevirtual", "Make Editable"), "MakeVirtual", new { VirtualPath = @item.FilePath, ShowAllTemplates = true }, new { @class = "btn btn-sm btn-default" })
-                        }
-                        @if (item.IsVirtual)
-                        {
-                            @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/edit", "Edit"), "Edit", new { VirtualPath = @item.FilePath, ShowAllTemplates = @Model.ShowAllTemplates }, new { @class = "btn btn-sm btn-default" })
-                            @Html.Raw("&nbsp;")
-                            @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/delete", "Revert to default"), "Delete", new { VirtualPath = @item.FilePath, ShowAllTemplates = @Model.ShowAllTemplates }, new { @class = "btn btn-sm btn-default", @onclick = "return confirm('" + @Html.TranslateFallback("/virtualtemplatesystem/messages/deleteconfirmprompt", "Are you sure you want to revert to the default implementation? This action cannot be undone and the template will be removed from the repository.") + "');" })
-                            @Html.Raw("&nbsp;")
-                            @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/compare", "Compare"), "Compare", new { VirtualPath = @item.FilePath, ShowAllTemplates = @Model.ShowAllTemplates }, new { @class = "btn btn-sm btn-default" })
-                        }
-                    </p>
+                    @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/view", "View"), "Display", new { VirtualPath = @item.FilePath, ShowAllTemplates = @Model.ShowAllTemplates }, new { @class = "btn btn-light" })
+                    @if (!item.IsVirtual)
+                    {
+                        @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/makevirtual", "Make Editable"), "MakeVirtual", new { VirtualPath = @item.FilePath, ShowAllTemplates = true }, new { @class = "btn btn-light" })
+                    }
+                    @if (item.IsVirtual)
+                    {
+                        @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/edit", "Edit"), "Edit", new { VirtualPath = @item.FilePath, ShowAllTemplates = @Model.ShowAllTemplates }, new { @class = "btn btn-light" })
+                        @Html.Raw("&nbsp;")
+                        @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/compare", "Compare"), "Compare", new {VirtualPath = @item.FilePath, ShowAllTemplates = @Model.ShowAllTemplates}, new {@class = "btn btn-light"})
+                        @Html.Raw("&nbsp;")
+                        @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/delete", "Revert to default"), "Revert", new {VirtualPath = @item.FilePath, ShowAllTemplates = @Model.ShowAllTemplates}, new {@class = "btn btn-light", @onclick = "return confirm('" + @Html.TranslateFallback("/virtualtemplatesystem/messages/deleteconfirmprompt", "Are you sure you want to revert to the default implementation? This will move the virtual template to the recycle bin.") + "');"})
+                    }
                 </td>
             </tr>
         }
+
+        </tbody>
 
     </table>
 
@@ -84,7 +91,7 @@
 
 
 <script type="text/javascript">
-    $(function() {
+    $(function () {
 
         var $filterForm = $('#resourceFilterForm'),
             $filterInput = $filterForm.find('.form-control:first-child'),
@@ -93,28 +100,28 @@
 
         function filter($item, query) {
             if ($item.text().search(new RegExp(query, 'i')) > -1) {
-                $item.removeClass('hidden');
+                $item.removeClass('d-none');
             } else {
-                $item.addClass('hidden');
+                $item.addClass('d-none');
             }
         }
 
         function filterEmpty($item) {
             if ($item.find('.editable-empty').length == 0) {
-                $item.addClass('hidden');
+                $item.addClass('d-none');
             }
         }
 
         function runFilter(query) {
             // clear state
-            $resourceItems.removeClass('hidden');
-            $resourceItems.each(function() { filter($(this), query); });
+            $resourceItems.removeClass('d-none');
+            $resourceItems.each(function () { filter($(this), query); });
         }
 
         var t;
-        $filterInput.on('input', function() {
+        $filterInput.on('input', function () {
             clearTimeout(t);
-            t = setTimeout(function() { runFilter($filterInput.val()); }, 500);
+            t = setTimeout(function () { runFilter($filterInput.val()); }, 500);
         });
 
         $filterForm.on('submit', function (e) {
@@ -125,4 +132,3 @@
 
     });
 </script>
-

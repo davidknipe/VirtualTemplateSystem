@@ -176,18 +176,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\VirtualTemplatesController.cs" />
-    <Compile Include="DTO\UITemplate.cs" />
     <Compile Include="Filter\AddXssHeader.cs" />
+    <Compile Include="EditorDescriptors\HideCategoryOnVirtualTemplatesEditorDescriptor.cs" />
     <Compile Include="Init\RegisterImplementations.cs" />
     <Compile Include="Init\RegisterVPPProvider.cs" />
-    <Compile Include="Interfaces\IUITemplateLister.cs" />
+    <Compile Include="Interfaces\IUiTemplateLister.cs" />
     <Compile Include="Init\RegisterControllerRoute.cs" />
     <Compile Include="Models\VirtualTemplatesCompareModel.cs" />
-    <Compile Include="Models\VirtualTemplatesEditModel.cs" />
-    <Compile Include="Models\VirtualTemplatesViewModel.cs" />
+    <Compile Include="Models\VirtualTemplateItemModel.cs" />
+    <Compile Include="Models\VirtualTemplatesListViewModel.cs" />
     <Compile Include="SecureUIAttribute.cs" />
     <Compile Include="VirtualTemplatesMenuProvider.cs" />
-    <Compile Include="Impl\UITemplateLister.cs" />
+    <Compile Include="Impl\UiTemplateLister.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -207,6 +207,13 @@
     <None Include="packages.config" />
     <Content Include="Views\VirtualTemplates\Compare.cshtml" />
     <Content Include="Views\VirtualTemplates\CompareDisplay.cshtml" />
+    <Content Include="Views\VirtualTemplates\Buttons\Save.cshtml" />
+    <Content Include="Views\VirtualTemplates\Buttons\SaveAndClose.cshtml" />
+    <Content Include="Views\VirtualTemplates\Buttons\Revert.cshtml" />
+    <Content Include="Views\VirtualTemplates\Buttons\Compare.cshtml" />
+    <Content Include="Views\VirtualTemplates\Buttons\Edit.cshtml" />
+    <Content Include="Views\VirtualTemplates\Buttons\MakeVirtual.cshtml" />
+    <Content Include="Views\VirtualTemplates\Shared\PanelTitle.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

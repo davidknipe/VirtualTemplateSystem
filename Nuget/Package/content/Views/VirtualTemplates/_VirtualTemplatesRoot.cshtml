@@ -2,7 +2,6 @@
 
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
     <title>Virtual Templates System</title>
 
     @Html.Raw(EPiServer.Framework.Web.Resources.ClientResources.RenderResources("ShellCore"))
@@ -11,21 +10,29 @@
     @Html.Raw(EPiServer.Framework.Web.Resources.ClientResources.RenderResources("Navigation"))
     @Html.Raw(EPiServer.Framework.Web.Resources.ClientResources.RenderResources("DojoDashboardCompatibility"))
 
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <script type="text/javascript" src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.3/ace.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.3/ext-modelist.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+    <!-- Ace Edtitor -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.3/ace.js" integrity="sha384-mIyND45gVTxAv3Fgk1Vv2O35/37OLb8SLI2iCAmhJoWEpeTA5cw0lSkiSmvNAhVF" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.3/ext-modelist.js" integrity="sha384-Mw+aXbbSQ59Q9mgwfBbtuFln2yMig5ed2ToCwZ1uIMCfraqyIeK8UzdJvN8QofNw" crossorigin="anonymous"></script>
+
+    @*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.3/ace.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.3/ext-modelist.js"></script>*@
 
     <style>
         body > #codeContainer {
             height: calc(100vh - 100px);
         }
 
-        body > .panel-body .panel-body {
+        body > .card-body .card-body {
             height: calc(100vh - 175px);
         }
 
@@ -33,11 +40,15 @@
             padding: 0;
         }
 
+        /*Fix to hide extra margin added by bootstrap to navigation*/
+        .epi-navigation-container1 > ul {
+            margin-bottom: 0px;
+        }
     </style>
 </head>
 
 <body>
-@Html.Raw(EPiServer.Shell.Navigation.MenuHelper.CreateGlobalMenu("/global", "/global/cms/templates"))
-@RenderBody()
+    @Html.Raw(EPiServer.Shell.Navigation.MenuHelper.CreateGlobalMenu("/global", "/global/cms/templates"))
+    @RenderBody()
 </body>
 </html>

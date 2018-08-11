@@ -9,7 +9,8 @@ namespace VirtualTemplates.UI
     {
         public void OnAuthorization(AuthorizationContext filterContext)
         {
-            if (!(PrincipalInfo.HasAdminAccess || PrincipalInfo.Current.HasPathAccess(VirtualTemplatesMenuProvider.RootUiUrl)))
+            if (!(PrincipalInfo.HasAdminAccess ||
+                  PrincipalInfo.Current.HasPathAccess(VirtualTemplatesMenuProvider.RootUiUrl)))
             {
                 filterContext.Result = new HttpUnauthorizedResult();
             }

@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
-using VirtualTemplates.UI.DTO;
+using VirtualTemplates.Core.Models;
 
 namespace VirtualTemplates.UI.Models
 {
-    public class VirtualTemplatesViewModel
+    public class VirtualTemplatesListViewModel
     {
         public string ConfirmMessage;
         public string ErrorMessage;
         public string LastActionPath;
         public bool ShowAllTemplates;
-        public IEnumerable<UITemplate> TemplateList; 
+        public IEnumerable<UiTemplate> TemplateList; 
     }
 }

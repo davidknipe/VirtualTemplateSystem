@@ -11,18 +11,21 @@ namespace VirtualTemplates.UI.Controllers
     [AuthoriseUi]
     public class VirtualTemplatesController : Controller
     {
-        private readonly ITemplatePersistenceService _viewPersistenceService;
+        private readonly IVirtualTemplateRepository _viewPersistenceService;
         private readonly LocalizationService _localizationService;
-        private readonly IUITemplateLister _uITemplateLister;
+        private readonly IUiTemplateLister _uITemplateLister;
+        private readonly IPhysicalFileReader _fileReader;
 
         public VirtualTemplatesController(
-              ITemplatePersistenceService viewPersistenceService
+              IVirtualTemplateRepository viewPersistenceService
             , LocalizationService localizationService
-            , IUITemplateLister uITemplateLister)
+            , IUiTemplateLister uITemplateLister
+            , IPhysicalFileReader physicalFileReader)
         {
             _viewPersistenceService = viewPersistenceService;
             _localizationService = localizationService;
             _uITemplateLister = uITemplateLister;
+            _fileReader = physicalFileReader;
         }
 
         public ActionResult Index()
@@ -37,18 +40,23 @@ namespace VirtualTemplates.UI.Controllers
 
         public ActionResult MakeVirtual(string VirtualPath, bool ShowAllTemplates)
         {
-            return View("Index", this.SaveTemplate(ShowAllTemplates, VirtualPath, System.IO.File.ReadAllBytes(this.Server.MapPath("~" + VirtualPath))));
+            return View("Index",
+                SaveTemplate(ShowAllTemplates, VirtualPath,
+                    _fileReader.ReadFile(Server.MapPath("~" + VirtualPath))));
         }
 
         public ActionResult Display(string VirtualPath, bool ShowAllTemplates)
         {
             var isVirtual = _viewPersistenceService.Exists(VirtualPath);
             return View(
-                new VirtualTemplatesEditModel()
+                new VirtualTemplateItemModel()
                 {
                     IsVirtual = _viewPersistenceService.Exists(VirtualPath),
                     VirtualPath = VirtualPath,
-                    TemplateContents = isVirtual ? _viewPersistenceService.GetViewFile(VirtualPath).FileContents : System.IO.File.ReadAllText(this.Server.MapPath("~" + VirtualPath)),
+                    TemplateContents =
+                        isVirtual
+                            ? _viewPersistenceService.GetTemplate(VirtualPath).FileContents
+                            : _fileReader.ReadFile(Server.MapPath("~" + VirtualPath)),
                     ShowAllTemplates =  ShowAllTemplates
                 });
         }
@@ -56,25 +64,49 @@ namespace VirtualTemplates.UI.Controllers
         public ActionResult Edit(string VirtualPath, bool ShowAllTemplates)
         {
             return View(
-                new VirtualTemplatesEditModel()
+                new VirtualTemplateItemModel()
                 {
                     IsVirtual = true,
                     VirtualPath = VirtualPath,
-                    TemplateContents = _viewPersistenceService.GetViewFile(VirtualPath).FileContents,
+                    TemplateContents = _viewPersistenceService.GetTemplate(VirtualPath).FileContents,
                     ShowAllTemplates = ShowAllTemplates
                 });
         }
 
         [HttpPost]
-        public ActionResult Edit(VirtualTemplatesEditModel model)
+        public ActionResult Edit(VirtualTemplateItemModel model)
         {
-            return View("Index", this.SaveTemplate(false, model.VirtualPath, System.Text.Encoding.UTF8.GetBytes(model.TemplateContents)));            
+            var viewModel = SaveTemplate(false, model.VirtualPath, model.TemplateContents);
+            if (model.Button == "Save and close")
+            {
+                return View("Index", viewModel);
+            }
+            else
+            {
+                model.ConfirmMessage =
+                    string.Format(
+                        _localizationService.GetString("/virtualtemplatesystem/messages/saveconfirm",
+                            "Template: <strong>{0}</strong> successfully saved"), model.VirtualPath);
+                return View(model);
+            }
         }
 
         [HttpPost]
         public ActionResult Compare(VirtualTemplatesCompareModel model)
         {
-            return View("Index", SaveTemplate(false, model.VirtualPath, System.Text.Encoding.UTF8.GetBytes(model.TemplateContents)));
+            var viewModel = SaveTemplate(false, model.VirtualPath, model.TemplateContents);
+            if (model.Button == "Save and close")
+            {
+                return View("Index", viewModel);
+            }
+            else
+            {
+                model.ConfirmMessage =
+                    string.Format(
+                        _localizationService.GetString("/virtualtemplatesystem/messages/saveconfirm",
+                            "Template: <strong>{0}</strong> successfully saved"), model.VirtualPath);
+                return View(model);
+            }
         }
 
         public ActionResult Compare(string VirtualPath, bool ShowAllTemplates)
@@ -84,8 +116,8 @@ namespace VirtualTemplates.UI.Controllers
                 {
                     IsVirtual = true,
                     VirtualPath = VirtualPath,
-                    TemplateContents = _viewPersistenceService.GetViewFile(VirtualPath).FileContents,
-                    OriginalContents = GetFileContents(VirtualPath)
+                    TemplateContents = _viewPersistenceService.GetTemplate(VirtualPath).FileContents,
+                    OriginalContents = _fileReader.ReadFile(Server.MapPath("~" + VirtualPath))
                 });
         }
 
@@ -96,57 +128,55 @@ namespace VirtualTemplates.UI.Controllers
                 {
                     IsVirtual = true,
                     VirtualPath = VirtualPath,
-                    TemplateContents = _viewPersistenceService.GetViewFile(VirtualPath).FileContents,
-                    OriginalContents = GetFileContents(VirtualPath)
+                    TemplateContents = _viewPersistenceService.GetTemplate(VirtualPath).FileContents,
+                    OriginalContents = _fileReader.ReadFile(Server.MapPath("~" + VirtualPath))
                 });
         }
 
-        private string GetFileContents(string VirtualPath)
+        public ActionResult Revert(string VirtualPath, bool ShowAllTemplates)
         {
-            return System.Text.Encoding.Default.GetString(
-                System.IO.File.ReadAllBytes(Server.MapPath("~" + VirtualPath)));
-        }
-
-        public ActionResult Delete(string VirtualPath, bool ShowAllTemplates)
-        {
-            VirtualTemplatesViewModel viewModel;
-            if (this._viewPersistenceService.DeleteViewFile(VirtualPath))
+            VirtualTemplatesListViewModel viewModel;
+            if (this._viewPersistenceService.RevertTemplate(VirtualPath))
             {
                 viewModel = this.PopulateViewModel(ShowAllTemplates);
-                var confirmMessage = _localizationService.GetString("/virtualtemplatesystem/messages/deleteconfirm", "Template: <strong>{0}</strong> successfully removed from online repository");
+                var confirmMessage = _localizationService.GetString("/virtualtemplatesystem/messages/deleteconfirm",
+                    "Template: <strong>{0}</strong> successfully reverted to original");
                 viewModel.ConfirmMessage = string.Format(confirmMessage, VirtualPath);
             }
             else
             {
                 viewModel = this.PopulateViewModel(ShowAllTemplates);
-                var errorMessage = _localizationService.GetString("/virtualtemplatesystem/messages/deleteerror", "Error when deleting: <strong>{0}</strong> from template repository");
+                var errorMessage = _localizationService.GetString("/virtualtemplatesystem/messages/deleteerror",
+                    "Error when deleting: <strong>{0}</strong> from template repository");
                 viewModel.ErrorMessage = string.Format(errorMessage, VirtualPath);
             }
             return View("Index", viewModel);
         }
 
-        private VirtualTemplatesViewModel PopulateViewModel(bool ShowAllTemplates)
+        private VirtualTemplatesListViewModel PopulateViewModel(bool ShowAllTemplates)
         {
-            var viewModel = new VirtualTemplatesViewModel();
+            var viewModel = new VirtualTemplatesListViewModel();
             viewModel.ShowAllTemplates = false;
             viewModel.TemplateList = _uITemplateLister.GetViewList(ShowAllTemplates);
             return viewModel;
         }
 
-        private VirtualTemplatesViewModel SaveTemplate(bool ShowAllTemplates, string VirtualPath, byte[] FileContents)
+        private VirtualTemplatesListViewModel SaveTemplate(bool ShowAllTemplates, string VirtualPath, string FileContents)
         {
-            VirtualTemplatesViewModel viewModel;
-            if (this._viewPersistenceService.SaveViewFile(VirtualPath, FileContents))
+            VirtualTemplatesListViewModel viewModel;
+            if (this._viewPersistenceService.SaveTemplate(VirtualPath, FileContents))
             {
-                viewModel = this.PopulateViewModel(ShowAllTemplates);
+                viewModel = PopulateViewModel(ShowAllTemplates);
                 viewModel.LastActionPath = VirtualPath;
-                var confirmMessage = _localizationService.GetString("/virtualtemplatesystem/messages/saveconfirm", "Template: <strong>{0}</strong> successfully saved");
+                var confirmMessage = _localizationService.GetString("/virtualtemplatesystem/messages/saveconfirm",
+                    "Template: <strong>{0}</strong> successfully saved");
                 viewModel.ConfirmMessage = string.Format(confirmMessage, VirtualPath);
             }
             else
             {
-                viewModel = this.PopulateViewModel(ShowAllTemplates);
-                var errorMessage = _localizationService.GetString("/virtualtemplatesystem/messages/saveerror", "Error when saving: <strong>{0}</strong> into template repository");
+                viewModel = PopulateViewModel(ShowAllTemplates);
+                var errorMessage = _localizationService.GetString("/virtualtemplatesystem/messages/saveerror",
+                    "Error when saving: <strong>{0}</strong> into template repository");
                 viewModel.ErrorMessage = string.Format(errorMessage, VirtualPath);
 
             }

@@ -1,43 +1,45 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using VirtualTemplates.Core.Interfaces;
-using VirtualTemplates.UI.DTO;
+using VirtualTemplates.Core.Models;
 using VirtualTemplates.UI.Interfaces;
 
 namespace VirtualTemplates.UI.Impl
 {
-    public class UITemplateLister : IUITemplateLister
+    public class UiTemplateLister : IUiTemplateLister
     {
         private readonly IPhysicalFileLister _physicalFileLister;
-        private readonly ITemplatePersistenceService _persistenceService;
+        private readonly IVirtualTemplateRepository _persistenceService;
 
-        public UITemplateLister(IPhysicalFileLister physicalFileLister, ITemplatePersistenceService persistenceService) 
+        public UiTemplateLister(IPhysicalFileLister physicalFileLister, IVirtualTemplateRepository persistenceService) 
         {
             _persistenceService = persistenceService;
             _physicalFileLister = physicalFileLister;
         }
 
-        public IEnumerable<UITemplate> GetViewList(bool IncludePhysicalViews)
+        public IEnumerable<UiTemplate> GetViewList(bool includePhysicalViews)
         {
-            if (IncludePhysicalViews)
+            if (includePhysicalViews)
             {
                 //Get both listings and work out whats physical and whats not
                 var physicalFiles = _physicalFileLister.ListPhysicalFiles();
-                var virtualFiles = _persistenceService.ListAllRegisteredViews();
+                var virtualFiles = _persistenceService.ListAllTemplates();
 
-                var returnData = from p in physicalFiles
-                                 join v in virtualFiles on p equals v into result
-                                 from r in result.DefaultIfEmpty()
-                                 select new UITemplate() { IsVirtual = (r != null), FilePath = p };
+                var returnData = physicalFiles
+                    .GroupJoin(virtualFiles, p => p, v => v.FilePath, (p, result) => new {p, result})
+                    .SelectMany(@t => @t.result.DefaultIfEmpty(),
+                        (@t, r) => new UiTemplate()
+                        {
+                            IsVirtual = (r != null),
+                            FilePath = @t.p
+                        });
 
                 return returnData.OrderBy(x => x.FilePath);
 
             }
             else
             {
-                IList<UITemplate> returnList = new List<UITemplate>();
-                _persistenceService.ListAllRegisteredViews().ToList().ForEach(x => returnList.Add(new UITemplate() { IsVirtual = true, FilePath = x }));
-                return returnList.OrderBy(x => x.FilePath);
+                return _persistenceService.ListAllTemplates().OrderBy(x => x.FilePath);
             }
         }
     }

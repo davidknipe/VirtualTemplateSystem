@@ -2,8 +2,10 @@
 
 namespace VirtualTemplates.UI.Models
 {
-    public class VirtualTemplatesEditModel
+    public class VirtualTemplateItemModel
     {
+        public string ConfirmMessage;
+
         public bool IsVirtual { get; set; }
         public string VirtualPath { get; set; }
 
@@ -11,5 +13,7 @@ namespace VirtualTemplates.UI.Models
         public string TemplateContents { get; set; }
 
         public bool ShowAllTemplates { get; set; }
+
+        public string Button { get; set; }
     }
 }

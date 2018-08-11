@@ -1,38 +1,32 @@
 ﻿@using System.Web.Mvc.Html
-@using EPiServer.Shell.Web.Mvc.Html
-@model VirtualTemplates.UI.Models.VirtualTemplatesEditModel
+@model VirtualTemplates.UI.Models.VirtualTemplateItemModel
 
 @{
     Layout = "_VirtualTemplatesRoot.cshtml";
 }
 
-<div class="panel-body" id="codeContainer">
+<div class="card-body" id="codeContainer">
 
     @using (Html.BeginForm())
     {
         <p>
             @if (!Model.IsVirtual)
             {
-                @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/makevirtual", "Make Virtual"), "MakeVirtual", new { VirtualPath = @Model.VirtualPath, ShowAllTemplates = false }, new { @class = "btn btn-sm btn-default" })
+                { Html.RenderPartial("Buttons/MakeVirtual"); }
             }
             else
             {
-                @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/edit", "Edit"), "Edit", new { VirtualPath = @Model.VirtualPath, ShowAllTemplates = false }, new { @class = "btn btn-sm btn-default" })
-            }
-            <a href="@Url.Action("Index")" class="btn btn-sm btn-default">Cancel</a>
-            @if (Model.IsVirtual)
-            {
-                @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/compare", "Compare"), "Compare", new { VirtualPath = @Model.VirtualPath, ShowAllTemplates = @Model.ShowAllTemplates }, new { @class = "btn btn-sm btn-default" })
+                { Html.RenderPartial("Buttons/Edit"); }
+                { Html.RenderPartial("Buttons/Compare"); }
+                { Html.RenderPartial("Buttons/Revert"); }
             }
         </p>
 
         @Html.HiddenFor(m => Model.VirtualPath)
-        <div class="panel panel-default code-wrapper">
-            <div class="panel-heading">
-                <h3 class="panel-title">@Model.VirtualPath</h3>
-            </div>
+        <div class="card card-body code-wrapper nopadding">
+            @{ Html.RenderPartial("Shared/PanelTitle"); }
 
-            <div class="panel-body" id="codepanel">@Html.TextAreaFor(m => Model.TemplateContents)</div>
+            <div class="card-body" id="codepanel">@Html.TextAreaFor(m => Model.TemplateContents)</div>
 
         </div>
     }
