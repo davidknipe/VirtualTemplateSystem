@@ -7,6 +7,19 @@ More information can be found here: https://www.david-tec.com/tag/vts
 
 ## Change log
 
+### v3.0
+
+- Upgraded to Bootstrap 4
+- Templates are now saved in the Episerver content repository (no longer the DDS)
+- Added "changed by" column in list view
+- Added "Save and close" button
+- Save button now stays on current view
+- Moved and renamed some button layouts
+- Added a close X button to the top right
+- Fixed a file encoding bug when reading certain file encoding types from storage
+- Fixed an issue when comparing files that had embedded </script> tags
+- Number of refactoring tasks
+
 ### v2.1
 
 - Added the ability to compare and merge the edited template with the one on disk
