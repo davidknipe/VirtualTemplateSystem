@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using EPiServer;
 using EPiServer.Core;
 using EPiServer.DataAccess;
@@ -34,15 +35,15 @@ namespace VirtualTemplates.Core.Impl
                     _registeredViewsCacheKey,
                     () =>
                     {
-                        var cacheVal = new Dictionary<string, ContentReference>();
+                        var cacheVal = new Dictionary<string, ContentReference>(StringComparer.InvariantCultureIgnoreCase);
                         var allTemplates =
                             _contentRepo.GetChildren<VirtualTemplateContent>(
                                 VirtualTemplateRootInit.VirtualTemplateRoot);
                         foreach (var template in allTemplates)
                         {
-                            if (!cacheVal.ContainsKey(template.VirtualPath))
+                            if (!cacheVal.ContainsKey(GetKey(template.VirtualPath)))
                             {
-                                cacheVal.Add(template.VirtualPath, template.ContentLink);
+                                cacheVal.Add(GetKey(template.VirtualPath), template.ContentLink);
                             }
                         }
                         return cacheVal;
@@ -54,19 +55,19 @@ namespace VirtualTemplates.Core.Impl
         public bool Exists(string virtualPath)
         {
             //Optimise for performance by using a Dictionary
-            return RegisteredViews.ContainsKey(virtualPath);
+            return RegisteredViews.ContainsKey(GetKey(virtualPath));
         }
 
         public VirtualTemplate GetTemplate(string virtualPath)
         {
-            if (!RegisteredViews.ContainsKey(virtualPath))
+            if (!RegisteredViews.ContainsKey(GetKey(virtualPath)))
                 return null;
 
-            var contentRef = RegisteredViews[virtualPath];
+            var contentRef = RegisteredViews[GetKey(virtualPath)];
             var template = _contentRepo.Get<VirtualTemplateContent>(contentRef);
             if (template != null)
             {
-                return new VirtualTemplate(virtualPath, template.TemplateContents);
+                return new VirtualTemplate(GetKey(virtualPath), template.TemplateContents);
             }
 
             return null;
@@ -75,9 +76,9 @@ namespace VirtualTemplates.Core.Impl
         public bool SaveTemplate(string virtualPath, string fileContents)
         {
             VirtualTemplateContent template;
-            if (RegisteredViews.ContainsKey(virtualPath))
+            if (RegisteredViews.ContainsKey(GetKey(virtualPath)))
             {
-                var contentRef = RegisteredViews[virtualPath];
+                var contentRef = RegisteredViews[GetKey(virtualPath)];
                 template =
                     _contentRepo.Get<VirtualTemplateContent>(contentRef)
                         .CreateWritableClone() as VirtualTemplateContent;
@@ -85,12 +86,12 @@ namespace VirtualTemplates.Core.Impl
             else
             {
                 template = _contentRepo.GetDefault<VirtualTemplateContent>(VirtualTemplateRootInit.VirtualTemplateRoot);
-                template.Name = virtualPath;
+                template.Name = GetKey(virtualPath);
             }
 
             if (template != null)
             {
-                template.VirtualPath = virtualPath;
+                template.VirtualPath = GetKey(virtualPath);
                 template.TemplateContents = fileContents;
                 _contentRepo.Save(template, SaveAction.ForceNewVersion | SaveAction.Publish, AccessLevel.NoAccess);
                 return true;
@@ -103,7 +104,7 @@ namespace VirtualTemplates.Core.Impl
         {
             if (RegisteredViews.ContainsKey(virtualPath))
             {
-                var contentRef = RegisteredViews[virtualPath];
+                var contentRef = RegisteredViews[GetKey(virtualPath)];
                 _contentRepo.MoveToWastebasket(contentRef);
                 return true;
             }
@@ -139,5 +140,7 @@ namespace VirtualTemplates.Core.Impl
                 _cache.Remove(_registeredViewsCacheKey);
             }
         }
+
+        private string GetKey(string virtualPath) => virtualPath.TrimStart('~');
     }
 }

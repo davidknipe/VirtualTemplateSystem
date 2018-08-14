@@ -7,6 +7,11 @@ More information can be found here: https://www.david-tec.com/tag/vts
 
 ## Change log
 
+### v3.0.3
+
+- UI bug fix for black text when should be white
+- Issue when tempalte paths contained ~ signs
+
 ### v3.0
 
 - Upgraded to Bootstrap 4

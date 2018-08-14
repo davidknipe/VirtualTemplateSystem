@@ -9,7 +9,7 @@
 
     @using (Html.BeginForm())
     {
-        <p>
+        <p class="action-buttons">
             @if (!Model.IsVirtual)
             {
                 { Html.RenderPartial("Buttons/MakeVirtual"); }
