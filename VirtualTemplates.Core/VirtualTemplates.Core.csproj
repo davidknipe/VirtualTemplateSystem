@@ -171,10 +171,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Impl\TemplateKeyConverter.cs" />
+    <Compile Include="Interfaces\ITemplateKeyConverter.cs" />
+    <Compile Include="Impl\VirtualTemplateVersionRepository.cs" />
+    <Compile Include="Interfaces\IVirtualTemplateVersionRepository.cs" />
     <Compile Include="Interfaces\IPhysicalFileReader.cs" />
     <Compile Include="Impl\PhysicalFileReader.cs" />
     <Compile Include="Models\UiTemplate.cs" />
     <Compile Include="Init\ContentEventsInit.cs" />
+    <Compile Include="Models\UiTemplateVersion.cs" />
     <Compile Include="Models\VirtualTemplateContentBase.cs" />
     <Compile Include="Init\VirtualTemplateRootInit.cs" />
     <Compile Include="Interfaces\IVirtualTemplateRepository.cs" />
@@ -183,7 +188,6 @@
     <Compile Include="Impl\PhysicalFileLister.cs" />
     <Compile Include="Impl\VirtualTemplatesCache.cs" />
     <Compile Include="Interfaces\IPhysicalFileLister.cs" />
-    <Compile Include="Init\RegisterImplementations.cs" />
     <Compile Include="Models\VirtualTemplateContent.cs" />
     <Compile Include="Models\VirtualTemplateRoot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

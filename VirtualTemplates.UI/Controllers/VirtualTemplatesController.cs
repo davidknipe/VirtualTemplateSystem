@@ -1,6 +1,10 @@
-﻿using EPiServer.Framework.Localization;
+﻿using System.Drawing.Text;
+using EPiServer.Framework.Localization;
 using System.Web.Mvc;
+using EPiServer.Core;
+using VirtualTemplates.Core.Impl;
 using VirtualTemplates.Core.Interfaces;
+using VirtualTemplates.Core.Models;
 using VirtualTemplates.UI.Filter;
 using VirtualTemplates.UI.Interfaces;
 using VirtualTemplates.UI.Models;
@@ -15,17 +19,20 @@ namespace VirtualTemplates.UI.Controllers
         private readonly LocalizationService _localizationService;
         private readonly IUiTemplateLister _uITemplateLister;
         private readonly IPhysicalFileReader _fileReader;
+        private readonly IVirtualTemplateVersionRepository _versionRepository;
 
         public VirtualTemplatesController(
-              IVirtualTemplateRepository viewPersistenceService
+            IVirtualTemplateRepository viewPersistenceService
             , LocalizationService localizationService
             , IUiTemplateLister uITemplateLister
-            , IPhysicalFileReader physicalFileReader)
+            , IPhysicalFileReader physicalFileReader
+            , IVirtualTemplateVersionRepository versionRepository)
         {
             _viewPersistenceService = viewPersistenceService;
             _localizationService = localizationService;
             _uITemplateLister = uITemplateLister;
             _fileReader = physicalFileReader;
+            _versionRepository = versionRepository;
         }
 
         public ActionResult Index()
@@ -40,9 +47,11 @@ namespace VirtualTemplates.UI.Controllers
 
         public ActionResult MakeVirtual(string VirtualPath, bool ShowAllTemplates)
         {
-            return View("Index",
-                SaveTemplate(ShowAllTemplates, VirtualPath,
-                    _fileReader.ReadFile(Server.MapPath("~" + VirtualPath))));
+            var result = SaveTemplate(ShowAllTemplates, VirtualPath,
+                _fileReader.ReadFile(Server.MapPath("~" + VirtualPath)));
+
+            var editModel = new { VirtualPath = VirtualPath, ShowAllTemplates = ShowAllTemplates};
+            return RedirectToAction("Edit", editModel);
         }
 
         public ActionResult Display(string VirtualPath, bool ShowAllTemplates)
@@ -79,7 +88,7 @@ namespace VirtualTemplates.UI.Controllers
             var viewModel = SaveTemplate(false, model.VirtualPath, model.TemplateContents);
             if (model.Button == "Save and close")
             {
-                return View("Index", viewModel);
+                return RedirectToAction("List", new { ShowAllTemplates = model.ShowAllTemplates });
             }
             else
             {
@@ -91,10 +100,77 @@ namespace VirtualTemplates.UI.Controllers
             }
         }
 
+        private VirtualTemplatesCompareModel GetCompareModel(string virtualPath, bool showAllTemplates, string leftVersion, string rightVersion, bool populateHistory)
+        {
+            var model = new VirtualTemplatesCompareModel()
+            {
+                VirtualPath = virtualPath,
+                ShowAllTemplates = showAllTemplates
+            };
+
+            // Set up references for content
+            ContentReference leftReference;
+            ContentReference rightReference = ContentReference.EmptyReference;
+
+            if (!string.IsNullOrEmpty(leftVersion))
+            {
+                leftReference = ContentReference.Parse(leftVersion);
+                ContentReference.TryParse(rightVersion, out rightReference);
+            }
+            else
+            {
+                leftReference = _viewPersistenceService.GetContentReference(virtualPath);
+            }
+
+            // Left panel content
+            var leftTemplateContent = _versionRepository.GetVersion(leftReference);
+            model.LeftContents = leftTemplateContent.FileContents;
+            model.LeftVersionText = leftTemplateContent.StatusText + ": " +
+                                    leftTemplateContent.ChangedDate.ToString("dd-MMM-yy, hh:mm") + " by " +
+                                    leftTemplateContent.ChangedBy;
+
+            // Right panel content
+            if (rightReference == null || rightReference == ContentReference.EmptyReference)
+            {
+                // Comparing original deployed version
+                model.RightContents = _fileReader.ReadFile(Server.MapPath("~" + leftTemplateContent.VirtualPath));
+                model.RightVersionText = "Original version";
+            }
+            else
+            {
+                var rightTemplateContent = _versionRepository.GetVersion(rightReference);
+                model.RightContents = rightTemplateContent.FileContents;
+                model.RightVersionText = rightTemplateContent.StatusText + ": " +
+                                         rightTemplateContent.ChangedDate.ToString("dd-MMM-yy, hh:mm") + " by " +
+                                         rightTemplateContent.ChangedBy;
+            }
+
+            if (populateHistory)
+            {
+                var allVersions = _versionRepository.GetAllVersions(leftReference, virtualPath);
+                allVersions.Add(new UiTemplateVersion()
+                {
+                    ChangedBy = "-",
+                    VirtualPath = virtualPath,
+                    Reference = leftReference,
+                    Status = VersionStatus.Published,
+                    StatusText = "Original version"
+                });
+                model.Versions = allVersions;
+            }
+            return model;
+        }
+
+        public ActionResult Compare(string VirtualPath, bool ShowAllTemplates, string leftVersion, string rightVersion)
+        {
+            return View(GetCompareModel(VirtualPath, ShowAllTemplates, leftVersion, rightVersion, true));
+        }
+
+
         [HttpPost]
         public ActionResult Compare(VirtualTemplatesCompareModel model)
         {
-            var viewModel = SaveTemplate(false, model.VirtualPath, model.TemplateContents);
+            var viewModel = SaveTemplate(false, model.VirtualPath, model.LeftContents);
             if (model.Button == "Save and close")
             {
                 return View("Index", viewModel);
@@ -109,28 +185,9 @@ namespace VirtualTemplates.UI.Controllers
             }
         }
 
-        public ActionResult Compare(string VirtualPath, bool ShowAllTemplates)
+        public ActionResult CompareDisplay(string VirtualPath, bool ShowAllTemplates, string leftVersion, string rightVersion)
         {
-            return View(
-                new VirtualTemplatesCompareModel()
-                {
-                    IsVirtual = true,
-                    VirtualPath = VirtualPath,
-                    TemplateContents = _viewPersistenceService.GetTemplate(VirtualPath).FileContents,
-                    OriginalContents = _fileReader.ReadFile(Server.MapPath("~" + VirtualPath))
-                });
-        }
-
-        public ActionResult CompareDisplay(string VirtualPath, bool ShowAllTemplates)
-        {
-            return View(
-                new VirtualTemplatesCompareModel()
-                {
-                    IsVirtual = true,
-                    VirtualPath = VirtualPath,
-                    TemplateContents = _viewPersistenceService.GetTemplate(VirtualPath).FileContents,
-                    OriginalContents = _fileReader.ReadFile(Server.MapPath("~" + VirtualPath))
-                });
+            return View(GetCompareModel(VirtualPath, ShowAllTemplates, leftVersion, rightVersion, false));
         }
 
         public ActionResult Revert(string VirtualPath, bool ShowAllTemplates)

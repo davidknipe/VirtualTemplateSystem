@@ -214,6 +214,7 @@
     <Content Include="Views\VirtualTemplates\Buttons\Edit.cshtml" />
     <Content Include="Views\VirtualTemplates\Buttons\MakeVirtual.cshtml" />
     <Content Include="Views\VirtualTemplates\Shared\PanelTitle.cshtml" />
+    <Content Include="Views\VirtualTemplates\Shared\VersionList.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

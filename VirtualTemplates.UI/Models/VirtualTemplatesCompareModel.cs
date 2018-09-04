@@ -1,4 +1,6 @@
-﻿using System.Web.Mvc;
+﻿using System.Collections.Generic;
+using System.Web.Mvc;
+using VirtualTemplates.Core.Models;
 
 namespace VirtualTemplates.UI.Models
 {
@@ -11,11 +13,19 @@ namespace VirtualTemplates.UI.Models
         public string VirtualPath { get; set; }
 
         [AllowHtml]
-        public string TemplateContents { get; set; }
+        public string LeftContents { get; set; }
 
         [AllowHtml]
-        public string OriginalContents { get; set; }
+        public string RightContents { get; set; }
 
         public string Button { get; set; }
+
+        public bool ShowAllTemplates { get; set; }
+
+        public IList<UiTemplateVersion> Versions { get; set; }
+
+        public string LeftVersionText { get; set; }
+
+        public string RightVersionText { get; set; }
     }
 }

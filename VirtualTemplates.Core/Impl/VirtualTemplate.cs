@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using System.Web.Hosting;
 
@@ -28,6 +29,12 @@ namespace VirtualTemplates.Core.Impl
             : base(virtualPath) => _data = fileData;
 
         public override Stream Open() => new MemoryStream(_data);
+
+        public string ChangedBy { get; set; }
+
+        public DateTime ChangedDate { get; set; }
+
+        public string StatusText { get; set; }
     }
 
 }

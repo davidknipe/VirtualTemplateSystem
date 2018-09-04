@@ -21,9 +21,9 @@ namespace VirtualTemplates.UI
             {
                 var uiUrl = EPiServer.Configuration.Settings.Instance.UIUrl.OriginalString;
                 uiUrl = uiUrl.TrimStart('~').TrimStart('/').TrimEnd('/');
-                uiUrl += "/Virtual.Template.System/";
+                uiUrl += "/VTS/";
                 return uiUrl;
-            }
+            } 
         }
 
         public IEnumerable<MenuItem> GetMenuItems()

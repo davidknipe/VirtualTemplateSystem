@@ -1,17 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using EPiServer.ServiceLocation;
 using VirtualTemplates.Core.Interfaces;
 using VirtualTemplates.Core.Models;
 using VirtualTemplates.UI.Interfaces;
 
 namespace VirtualTemplates.UI.Impl
 {
+    [ServiceConfiguration(typeof(IUiTemplateLister))]
     public class UiTemplateLister : IUiTemplateLister
     {
         private readonly IPhysicalFileLister _physicalFileLister;
         private readonly IVirtualTemplateRepository _persistenceService;
 
-        public UiTemplateLister(IPhysicalFileLister physicalFileLister, IVirtualTemplateRepository persistenceService) 
+        public UiTemplateLister(IPhysicalFileLister physicalFileLister, IVirtualTemplateRepository persistenceService)
         {
             _persistenceService = persistenceService;
             _physicalFileLister = physicalFileLister;
@@ -31,7 +33,9 @@ namespace VirtualTemplates.UI.Impl
                         (@t, r) => new UiTemplate()
                         {
                             IsVirtual = (r != null),
-                            FilePath = @t.p
+                            FilePath = @t.p,
+                            ChangedBy = r?.ChangedBy,
+                            Versions = r?.Versions
                         });
 
                 return returnData.OrderBy(x => x.FilePath);

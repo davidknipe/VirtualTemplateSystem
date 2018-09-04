@@ -7,6 +7,14 @@ More information can be found here: https://www.david-tec.com/tag/vts
 
 ## Change log
 
+### v3.1
+
+- Version history showing last 5 versions now visible in the UI
+- Icons and colour now used in the UI
+- Fixed a bug where an exception would be thrown if the application tried to access a file in Application_Start()
+- Changed URL segment to VTS
+- Add sub-resource integrity hash for the ace-diff library
+
 ### v3.0.3
 
 - UI bug fix for black text when should be white

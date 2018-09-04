@@ -2,15 +2,18 @@
 using System.IO;
 using System.Linq;
 using System.Web.Hosting;
+using EPiServer.ServiceLocation;
 using VirtualTemplates.Core.Interfaces;
 
 namespace VirtualTemplates.Core.Impl
 {
+    [ServiceConfiguration(typeof(IPhysicalFileLister))]
     public class PhysicalFileLister : IPhysicalFileLister
     {
         /// <inheritdoc />
         public IEnumerable<string> ListPhysicalFiles() 
-            => ListPhysicalFiles(HostingEnvironment.ApplicationPhysicalPath, new List<string>() { "*.cshtml", "*.css", "*.js" });
+            => ListPhysicalFiles(HostingEnvironment.ApplicationPhysicalPath,
+                new List<string>() {"*.cshtml", "*.css", "*.js"});
 
         /// <inheritdoc />
         public IEnumerable<string> ListPhysicalFiles(string path, IList<string> searchPattern)

@@ -46,41 +46,61 @@
             <input type="search" value="" class="form-control search-input" placeholder="Enter Search Query" />
         </div>
     </form>
-    
+
     <table id="resourceList" class="table">
 
         <thead>
-                <tr>
-                    <th scope="col">Path</th>
-                    <th scope="col">Changed by</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-
-            <tbody>
-
-        @foreach (var item in Model.TemplateList)
-            {
-            <tr class="resource">
-                <td class="align-middle">@item.FilePath</td>
-                <td class="align-middle">@item.ChangedBy</td>
-                <td>
-                    @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/view", "View"), "Display", new { VirtualPath = @item.FilePath, ShowAllTemplates = @Model.ShowAllTemplates }, new { @class = "btn btn-light" })
-                    @if (!item.IsVirtual)
-                    {
-                        @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/makevirtual", "Make Editable"), "MakeVirtual", new { VirtualPath = @item.FilePath, ShowAllTemplates = true }, new { @class = "btn btn-light" })
-                    }
-                    @if (item.IsVirtual)
-                    {
-                        @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/edit", "Edit"), "Edit", new { VirtualPath = @item.FilePath, ShowAllTemplates = @Model.ShowAllTemplates }, new { @class = "btn btn-light" })
-                        @Html.Raw("&nbsp;")
-                        @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/compare", "Compare"), "Compare", new {VirtualPath = @item.FilePath, ShowAllTemplates = @Model.ShowAllTemplates}, new {@class = "btn btn-light"})
-                        @Html.Raw("&nbsp;")
-                        @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/delete", "Revert to default"), "Revert", new {VirtualPath = @item.FilePath, ShowAllTemplates = @Model.ShowAllTemplates}, new {@class = "btn btn-light", @onclick = "return confirm('" + @Html.TranslateFallback("/virtualtemplatesystem/messages/deleteconfirmprompt", "Are you sure you want to revert to the default implementation? This will move the virtual template to the recycle bin.") + "');"})
-                    }
-                </td>
+            <tr>
+                <th scope="col">Path</th>
+                <th scope="col">Changed by</th>
+                <th scope="col">Actions</th>
             </tr>
-        }
+        </thead>
+
+        <tbody>
+
+            @{
+                int count = 0;
+            }
+            @foreach (var item in Model.TemplateList)
+            {
+                <tr class="resource">
+                    <td class="align-middle">@item.FilePath</td>
+                    <td class="align-middle">
+                        @if (item.IsVirtual)
+                        {
+                            <button type="button"
+                                    class="btn btn-light btn-history"
+                                    data-placement="bottom"
+                                    data-container="body"
+                                    data-html="true"
+                                    data-toggle="popover"
+                                    title="5 most recent versions"
+                                    data-template="&lt;div class=&quot;popover shadow-lg&quot; role=&quot;tooltip&quot;&gt;&lt;div class=&quot;arrow&quot;&gt;&lt;/div&gt;&lt;h3 class=&quot;popover-header&quot;&gt;&lt;/h3&gt;&lt;div class=&quot;popover-body&quot;&gt;&lt;/div&gt;&lt;/div&gt;"
+                                    data-content="@{ Html.RenderPartial("Shared/VersionList", item); }">
+                                @item.ChangedBy <i class="fas fa-caret-down text-dark"></i>
+                            </button>
+                        }
+                    </td>
+                    <td class="action-buttons">
+                        @if (!item.IsVirtual)
+                        {
+                            @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/view", " "), "Display", new { VirtualPath = @item.FilePath, ShowAllTemplates = @Model.ShowAllTemplates }, new { @class = "btn btn-primary fas fa-file", @data_toggle = "tooltip", @data_placement = "bottom", @title = "View template", @data_delay = "500" })
+                            @Html.Raw("&nbsp;")
+                            @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/makevirtual", " "), "MakeVirtual", new { VirtualPath = @item.FilePath, ShowAllTemplates = true }, new { @class = "btn btn-primary fas fa-edit", @data_toggle = "tooltip", @data_placement = "bottom", @title = "Edit online", @data_delay = "500" })
+                        }
+                        @if (item.IsVirtual)
+                        {
+                            @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/edit", " "), "Edit", new { VirtualPath = @item.FilePath, ShowAllTemplates = @Model.ShowAllTemplates }, new { @class = "btn btn-primary fas fa-edit", @data_toggle = "tooltip", @data_placement = "bottom", @title = "Edit template", @data_delay = "500" })
+                            @Html.Raw("&nbsp;")
+                            @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/compare", " "), "Compare", new { VirtualPath = @item.FilePath, ShowAllTemplates = @Model.ShowAllTemplates }, new { @class = "btn btn-primary fas fa-exchange-alt", @data_toggle = "tooltip", @data_placement = "bottom", @title = "Compare with default", @data_delay = "500" })
+                            @Html.Raw("&nbsp;")
+                            @Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/delete", " "), "Revert", new { VirtualPath = @item.FilePath, ShowAllTemplates = @Model.ShowAllTemplates }, new { @class = "btn btn-danger fas fa-undo", @data_toggle = "tooltip", @data_placement = "bottom", @title = "Revert to default", @data_delay = "500", @onclick = "return confirm('" + @Html.TranslateFallback("/virtualtemplatesystem/messages/deleteconfirmprompt", "Are you sure you want to revert to the default implementation? This will move the virtual template to the recycle bin.") + "');" })
+                        }
+                    </td>
+                </tr>
+        count++;
+    }
 
         </tbody>
 
@@ -91,6 +111,52 @@
 
 
 <script type="text/javascript">
+
+    //$(function () {
+    //    $('[data-toggle="tooltip"]').tooltip();
+    //});
+
+    // Enable pop overs
+    $(function() {
+
+        // Enable tooltips
+        $('[data-toggle="tooltip"]').tooltip();
+
+        // Enable pop overs and hide history buttons if another popover is pressed
+        $('[data-toggle="popover"]').popover();
+
+        // Hide history button if another popover is pressed
+        $('.btn-history').on('click',
+            function(e) {
+                $('.btn-history').not(this).popover('hide');
+            });
+
+        // Link for compare view when viewing history
+        $('.btn-history').on('shown.bs.popover',
+            function() {
+                $('.history-row').on('click',
+                    function (e) {
+                        var url = '@Url.Action("Compare", "VirtualTemplates", new { ShowAllTemplates = @Model.ShowAllTemplates })';
+                        url += '&virtualpath=' + e.currentTarget.dataset.virtualpath;
+                        url += '&leftversion=' + e.currentTarget.dataset.leftversion;
+                        url += '&rightversion=' + e.currentTarget.dataset.rightversion;
+                        document.location = url;
+                    });
+            });
+    });
+
+    // Hide pop overs if clicked elsewhere on the page
+    $(document).on('click', function (e) {
+        $('[data-toggle="popover"],[data-original-title]').each(function () {
+            //the 'is' for buttons that trigger popups
+            //the 'has' for icons within a button that triggers a popup
+            if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {                
+                (($(this).popover('hide').data('bs.popover')||{}).inState||{}).click = false  // fix for BS 3.3.6
+            }
+
+        });
+    });
+
     $(function () {
 
         var $filterForm = $('#resourceFilterForm'),
