@@ -44,10 +44,17 @@ namespace VirtualTemplates.Core.Init
 
         private void ContentEvents_DeletingContent(object sender, EPiServer.DeleteContentEventArgs e)
         {
-            var content = _contentLoader.Get<VirtualTemplateContent>(e.ContentLink);
-            if (content != null)
+            try
             {
-                _templateRepository.ResetState();
+                var content = _contentLoader.Get<VirtualTemplateContent>(e.ContentLink);
+                if (content != null)
+                {
+                    _templateRepository.ResetState();
+                }
+            }
+            catch
+            {
+                // ignored
             }
         }
 

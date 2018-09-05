@@ -7,6 +7,10 @@ More information can be found here: https://www.david-tec.com/tag/vts
 
 ## Change log
 
+### v3.1.1
+
+- Bug fix when deleting content
+
 ### v3.1
 
 - Version history showing last 5 versions now visible in the UI

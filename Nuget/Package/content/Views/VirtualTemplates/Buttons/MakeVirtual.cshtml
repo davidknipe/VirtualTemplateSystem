@@ -1,0 +1,10 @@
+﻿@using System.Web.Mvc.Html
+@using EPiServer.Shell.Web.Mvc.Html
+
+@*@Html.ActionLink(Html.TranslateFallback("/virtualtemplatesystem/buttons/makevirtual", "Edit now"), "MakeVirtual", new { VirtualPath = @Model.VirtualPath, ShowAllTemplates = false }, new { @class = "btn btn-sm btn-primary fas fa-edit" })*@
+
+
+<a class="btn btn-sm btn-primary"
+   href="@Url.Action("MakeVirtual", "VirtualTemplates", new { VirtualPath = @Model.VirtualPath, ShowAllTemplates = false })">
+    <i class="fas fa-edit"></i> @Html.TranslateFallback("/virtualtemplatesystem/buttons/makevirtual", "Edit now")
+</a>
