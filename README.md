@@ -7,6 +7,10 @@ More information can be found here: https://www.david-tec.com/tag/vts
 
 ## Change log
 
+### v3.2
+
+- Add abilty to search in file contents
+
 ### v3.1.1
 
 - Bug fix when deleting content

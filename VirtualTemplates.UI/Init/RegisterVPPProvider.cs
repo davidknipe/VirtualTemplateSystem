@@ -6,7 +6,6 @@ using EPiServer.Framework.Initialization;
 using EPiServer.Initialization;
 using EPiServer.ServiceLocation;
 using EPiServer.UI;
-using VirtualTemplates.Core.Impl;
 using VirtualTemplates.Core.Interfaces;
 using VirtualTemplates.Core.Providers;
 

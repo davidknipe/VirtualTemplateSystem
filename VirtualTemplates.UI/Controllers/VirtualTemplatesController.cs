@@ -1,8 +1,6 @@
-﻿using System.Drawing.Text;
-using EPiServer.Framework.Localization;
+﻿using EPiServer.Framework.Localization;
 using System.Web.Mvc;
 using EPiServer.Core;
-using VirtualTemplates.Core.Impl;
 using VirtualTemplates.Core.Interfaces;
 using VirtualTemplates.Core.Models;
 using VirtualTemplates.UI.Filter;
@@ -20,19 +18,21 @@ namespace VirtualTemplates.UI.Controllers
         private readonly IUiTemplateLister _uITemplateLister;
         private readonly IPhysicalFileReader _fileReader;
         private readonly IVirtualTemplateVersionRepository _versionRepository;
+        private readonly IFileSearcher _templateSearcher;
 
         public VirtualTemplatesController(
             IVirtualTemplateRepository viewPersistenceService
             , LocalizationService localizationService
             , IUiTemplateLister uITemplateLister
             , IPhysicalFileReader physicalFileReader
-            , IVirtualTemplateVersionRepository versionRepository)
+            , IVirtualTemplateVersionRepository versionRepository, IFileSearcher templateSearcher)
         {
             _viewPersistenceService = viewPersistenceService;
             _localizationService = localizationService;
             _uITemplateLister = uITemplateLister;
             _fileReader = physicalFileReader;
             _versionRepository = versionRepository;
+            _templateSearcher = templateSearcher;
         }
 
         public ActionResult Index()
@@ -208,6 +208,12 @@ namespace VirtualTemplates.UI.Controllers
                 viewModel.ErrorMessage = string.Format(errorMessage, VirtualPath);
             }
             return View("Index", viewModel);
+        }
+
+        public JsonResult SearchFiles(SearchViewModel search)
+        {
+            var results = _templateSearcher.SearchFiles(search.searchString);
+            return Json(new { total = results.Count, data = results }, JsonRequestBehavior.AllowGet);
         }
 
         private VirtualTemplatesListViewModel PopulateViewModel(bool ShowAllTemplates)

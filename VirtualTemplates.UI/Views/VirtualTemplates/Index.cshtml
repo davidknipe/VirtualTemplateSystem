@@ -43,7 +43,8 @@
 
     <form id="resourceFilterForm">
         <div class="form-group">
-            <input type="search" value="" class="form-control search-input" placeholder="Enter Search Query" />
+            <input id="searchBox" type="search" value="" class="form-control search-input searchBox fileSearch" 
+                   placeholder="Search file name or contents" />
         </div>
     </form>
 
@@ -64,7 +65,7 @@
             }
             @foreach (var item in Model.TemplateList)
             {
-                <tr class="resource">
+                <tr class="resource" data-virtualpath='@item.FilePath'>
                     <td class="align-middle">@item.FilePath</td>
                     <td class="align-middle">
                         @if (item.IsVirtual)
@@ -164,36 +165,41 @@
             $resourceList = $('#resourceList'),
             $resourceItems = $resourceList.find('.resource');
 
-        function filter($item, query) {
-            if ($item.text().search(new RegExp(query, 'i')) > -1) {
-                $item.removeClass('d-none');
-            } else {
-                $item.addClass('d-none');
+        function runServerFilter(query) {
+            if (query.length === 0) {
+                $resourceItems.removeClass('d-none');
+                return;
             }
-        }
 
-        function filterEmpty($item) {
-            if ($item.find('.editable-empty').length == 0) {
-                $item.addClass('d-none');
-            }
-        }
-
-        function runFilter(query) {
-            // clear state
-            $resourceItems.removeClass('d-none');
-            $resourceItems.each(function () { filter($(this), query); });
+            // hide everything by default
+            $resourceItems.addClass('d-none');
+            $filterInput.removeClass('fileSearch');
+            $filterInput.addClass('fileSearching');
+            // run search
+            $.get("SearchFiles", { searchString: query })
+                .done(function( data ) {
+                    var searchResults = data;
+                    searchResults.data.forEach(function(path) {
+                        var foundItem = $("[data-virtualpath='" + path + "']");
+                        if (foundItem != null) {
+                            foundItem.removeClass('d-none');
+                        }
+                    });
+                    $filterInput.addClass('fileSearch');
+                    $filterInput.removeClass('fileSearching');
+                });
         }
 
         var t;
         $filterInput.on('input', function () {
             clearTimeout(t);
-            t = setTimeout(function () { runFilter($filterInput.val()); }, 500);
+            t = setTimeout(function () { runServerFilter($filterInput.val()); }, 750);
         });
 
         $filterForm.on('submit', function (e) {
             e.preventDefault();
             clearTimeout(t);
-            runFilter($filterInput.val());
+            //runFilter($filterInput.val());
         });
 
     });
