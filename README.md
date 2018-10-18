@@ -7,6 +7,10 @@ More information can be found here: https://www.david-tec.com/tag/vts
 
 ## Change log
 
+### v3.2.1
+
+- Fix bug where file name searches are not case-insensitive
+
 ### v3.2
 
 - Add abilty to search in file contents

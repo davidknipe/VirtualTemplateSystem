@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Web;
-using System.Web.Mvc;
 using EPiServer.ServiceLocation;
 using VirtualTemplates.Core.Interfaces;
 
@@ -34,7 +33,7 @@ namespace VirtualTemplates.Core.Impl
 
             foreach (var file in allFiles)
             {
-                if (file.Contains(searchString))
+                if (file.ToLower().Contains(searchString))
                 {
                     results.Add(file);
                 }
