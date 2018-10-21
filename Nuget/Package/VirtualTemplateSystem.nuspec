@@ -2,9 +2,9 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>VirtualTemplateSystem</id>
-    <version>3.2.1</version>
+    <version>3.2.2</version>
     <description>Virtual Template System for Episerver allows users to view and modify templates from the Episerver UI</description>
-    <releaseNotes>v3.2.1 Fix bug where file name searches are not case-insensitive</releaseNotes>
+    <releaseNotes>v3.2.2 Fix bug where searches are not run if a user presses [enter]</releaseNotes>
     <iconUrl>https://www.david-tec.com/global/media/virtualtemplatesystem/vtsicon.png?v3.2.0</iconUrl>
     <authors>David Knipe</authors>
     <owners>David Knipe</owners>
