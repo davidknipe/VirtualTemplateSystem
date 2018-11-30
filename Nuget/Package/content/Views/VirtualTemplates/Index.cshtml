@@ -176,7 +176,8 @@
             $filterInput.removeClass('fileSearch');
             $filterInput.addClass('fileSearching');
             // run search
-            $.get("SearchFiles", { searchString: query })
+            var action = "@Url.Action("SearchFiles", "VirtualTemplates")";
+            $.get(action, { searchString: query })
                 .done(function( data ) {
                     var searchResults = data;
                     searchResults.data.forEach(function(path) {

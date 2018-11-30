@@ -7,6 +7,10 @@ More information can be found here: https://www.david-tec.com/tag/vts
 
 ## Change log
 
+### v3.2.3
+
+- Fix that would prevent searching of files edited online when first opening the template listing
+
 ### v3.2.2
 
 - Fix bug where searches are not run if a user presses [enter]
