@@ -70,7 +70,7 @@ namespace VirtualTemplates.UI.Init
 
                 _virtualTemplatesCache.Service.Reset();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //TODO: Log an init errors
             }

@@ -9,6 +9,7 @@ namespace VirtualTemplates.UI.Models
         public string ErrorMessage;
         public string LastActionPath;
         public bool ShowAllTemplates;
-        public IEnumerable<UiTemplate> TemplateList; 
+        public IEnumerable<UiTemplate> TemplateList;
+        public string LastSearch;
     }
 }

@@ -13,6 +13,7 @@
             @{ Html.RenderPartial("Buttons/Save"); }
             @{ Html.RenderPartial("Buttons/SaveAndClose"); }
             @{ Html.RenderPartial("Buttons/Compare"); }
+            <span id="confirmMessage"></span>
             @{ Html.RenderPartial("Buttons/Revert"); }
         </p>
 
@@ -30,20 +31,47 @@
 </div>
 
 <script>
-    function getModeByFileExtension(path){
-        var modelist = ace.require("ace/ext/modelist");
-        return modelist.getModeForPath(path).mode;
-    }
+    $(function() {
 
-    var filename = "@Model.VirtualPath";
-    var editor = ace.edit("codepanel");
-    var mode = getModeByFileExtension(filename);
-    ace.require(mode);
-    editor.setOptions({
-        fontSize: "12px"
-    });
-    editor.session.setMode(mode);
-    editor.getSession().on('change', function (e) {
-        document.getElementById("TemplateContents").value = editor.getValue();
+        function getModeByFileExtension(path) {
+            var modelist = ace.require("ace/ext/modelist");
+            return modelist.getModeForPath(path).mode;
+        }
+
+        var filename = "@Model.VirtualPath";
+            var editor = ace.edit("codepanel");
+            var mode = getModeByFileExtension(filename);
+            ace.require(mode);
+            editor.setOptions({
+                fontSize: "12px"
+            });
+            editor.session.setMode(mode);
+            editor.getSession().on('change',
+                function(e) {
+                    document.getElementById("TemplateContents").value = editor.getValue();
+                });
+
+        var $saveButton = $('#saveButton');
+        var $confirmMessage = $('#confirmMessage');
+
+        function saveTemplate(templateContents) {
+
+            $confirmMessage.html("Saving...");
+            $('.spinner').removeClass('d-none');
+            var action = "@Url.Action("SaveTemplateContents", "VirtualTemplates")";
+            $.post(action, {
+                VirtualPath: '@Model.VirtualPath',
+                TemplateContents: templateContents
+            })
+                .done(function( data ) {
+                    $('.spinner').addClass('d-none');
+                    $confirmMessage.html(data.message);
+                });
+        }
+
+        $saveButton.on('click', function (e) {
+            e.preventDefault();
+            saveTemplate(document.getElementById("TemplateContents").value);
+        });
     });
 </script>

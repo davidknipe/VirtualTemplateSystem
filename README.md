@@ -7,6 +7,16 @@ More information can be found here: https://www.david-tec.com/tag/vts
 
 ## Change log
 
+### v3.3
+
+- Saving now is done without a full page refresh
+- Persist value of ShowAllTemplates in Episerver Profile so user comes back to last state when viewing the template list
+- Persist value of the last search value in Episerver Profile so user comes back to last state when viewing the template list
+- Added a background colour and removed line highlight when in display mode to help indicate readonly status
+- Upgraded to latest version of Ace Editor
+- Fixed a bug when using the compare view to edit files
+- Simplified views by removing ShowAllTemplates values being passed around on query strings
+
 ### v3.2.3
 
 - Fix that would prevent searching of files edited online when first opening the template listing

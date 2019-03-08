@@ -178,6 +178,8 @@
     <Compile Include="Controllers\VirtualTemplatesController.cs" />
     <Compile Include="Filter\AddXssHeader.cs" />
     <Compile Include="EditorDescriptors\HideCategoryOnVirtualTemplatesEditorDescriptor.cs" />
+    <Compile Include="Interfaces\IProfileHelper.cs" />
+    <Compile Include="Impl\ProfileHelper.cs" />
     <Compile Include="Init\RegisterVPPProvider.cs" />
     <Compile Include="Interfaces\IUiTemplateLister.cs" />
     <Compile Include="Init\RegisterRoutes.cs" />

@@ -20,8 +20,6 @@ namespace VirtualTemplates.UI.Models
 
         public string Button { get; set; }
 
-        public bool ShowAllTemplates { get; set; }
-
         public IList<UiTemplateVersion> Versions { get; set; }
 
         public string LeftVersionText { get; set; }

@@ -1,6 +1,7 @@
 ﻿using EPiServer.Framework.Localization;
 using System.Web.Mvc;
 using EPiServer.Core;
+using EPiServer.Shell.Profile;
 using VirtualTemplates.Core.Interfaces;
 using VirtualTemplates.Core.Models;
 using VirtualTemplates.UI.Filter;
@@ -19,13 +20,19 @@ namespace VirtualTemplates.UI.Controllers
         private readonly IPhysicalFileReader _fileReader;
         private readonly IVirtualTemplateVersionRepository _versionRepository;
         private readonly IFileSearcher _templateSearcher;
+        private readonly IProfileHelper _profileHelper;
+
+        private const string ProfileKeyShowAllTemplates = "vts:ShowAllTemplates";
+        private const string ProfileKeyLastSearch = "vts:LastSearch";
 
         public VirtualTemplatesController(
             IVirtualTemplateRepository viewPersistenceService
             , LocalizationService localizationService
             , IUiTemplateLister uITemplateLister
             , IPhysicalFileReader physicalFileReader
-            , IVirtualTemplateVersionRepository versionRepository, IFileSearcher templateSearcher)
+            , IVirtualTemplateVersionRepository versionRepository
+            , IFileSearcher templateSearcher
+            , IProfileHelper profileHelper)
         {
             _viewPersistenceService = viewPersistenceService;
             _localizationService = localizationService;
@@ -33,28 +40,32 @@ namespace VirtualTemplates.UI.Controllers
             _fileReader = physicalFileReader;
             _versionRepository = versionRepository;
             _templateSearcher = templateSearcher;
+            _profileHelper = profileHelper;
         }
 
-        public ActionResult Index()
+        public ActionResult Index(bool? ShowAllTemplates)
         {
-            return View(this.PopulateViewModel(false));
+            if (ShowAllTemplates.HasValue)
+            {
+                _profileHelper.SetProfileValue<bool>(User.Identity.Name, ProfileKeyShowAllTemplates, ShowAllTemplates.Value);
+            }
+            return View("Index", this.PopulateViewModel());
         }
 
-        public ActionResult List(bool ShowAllTemplates)
+        private void SetShowAllTemplatesValue(bool ShowAllTemplates)
         {
-            return View("Index", this.PopulateViewModel(ShowAllTemplates));
         }
 
-        public ActionResult MakeVirtual(string VirtualPath, bool ShowAllTemplates)
+        public ActionResult MakeVirtual(string VirtualPath)
         {
-            var result = SaveTemplate(ShowAllTemplates, VirtualPath,
+            var result = SaveTemplate(VirtualPath,
                 _fileReader.ReadFile(Server.MapPath("~" + VirtualPath)));
 
-            var editModel = new { VirtualPath = VirtualPath, ShowAllTemplates = ShowAllTemplates};
+            var editModel = new { VirtualPath = VirtualPath };
             return RedirectToAction("Edit", editModel);
         }
 
-        public ActionResult Display(string VirtualPath, bool ShowAllTemplates)
+        public ActionResult Display(string VirtualPath)
         {
             var isVirtual = _viewPersistenceService.Exists(VirtualPath);
             return View(
@@ -65,30 +76,63 @@ namespace VirtualTemplates.UI.Controllers
                     TemplateContents =
                         isVirtual
                             ? _viewPersistenceService.GetTemplate(VirtualPath).FileContents
-                            : _fileReader.ReadFile(Server.MapPath("~" + VirtualPath)),
-                    ShowAllTemplates =  ShowAllTemplates
+                            : _fileReader.ReadFile(Server.MapPath("~" + VirtualPath))
                 });
         }
 
-        public ActionResult Edit(string VirtualPath, bool ShowAllTemplates)
+        public ActionResult Edit(string VirtualPath)
         {
             return View(
                 new VirtualTemplateItemModel()
                 {
                     IsVirtual = true,
                     VirtualPath = VirtualPath,
-                    TemplateContents = _viewPersistenceService.GetTemplate(VirtualPath).FileContents,
-                    ShowAllTemplates = ShowAllTemplates
+                    TemplateContents = _viewPersistenceService.GetTemplate(VirtualPath).FileContents
                 });
         }
 
         [HttpPost]
         public ActionResult Edit(VirtualTemplateItemModel model)
         {
-            var viewModel = SaveTemplate(false, model.VirtualPath, model.TemplateContents);
+            var viewModel = SaveTemplate(model.VirtualPath, model.TemplateContents);
             if (model.Button == "Save and close")
             {
-                return RedirectToAction("List", new { ShowAllTemplates = model.ShowAllTemplates });
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                model.ConfirmMessage =
+                    string.Format(
+                        _localizationService.GetString("/virtualtemplatesystem/messages/saveconfirm",
+                            "Template: <strong>{0}</strong> successfully saved"), model.VirtualPath);
+                return View(model);
+            }
+        }
+        
+        [HttpPost]
+        public JsonResult SaveTemplateContents(VirtualTemplateItemModel model)
+        {
+            var viewModel = SaveTemplate(model.VirtualPath, model.TemplateContents);
+            if (!string.IsNullOrEmpty(viewModel.ErrorMessage))
+            {
+                return Json(new { success = false, message = viewModel.ErrorMessage });
+            }
+            return Json(new { success = true, message = viewModel.ConfirmMessage });
+        }
+
+        public ActionResult Compare(string VirtualPath, string leftVersion, string rightVersion)
+        {
+            return View(GetCompareModel(VirtualPath, leftVersion, rightVersion, true));
+        }
+
+
+        [HttpPost]
+        public ActionResult Compare(VirtualTemplatesCompareModel model)
+        {
+            var viewModel = SaveTemplate(model.VirtualPath, model.LeftContents);
+            if (model.Button == "Save and close")
+            {
+                return View("Index", viewModel);
             }
             else
             {
@@ -100,12 +144,82 @@ namespace VirtualTemplates.UI.Controllers
             }
         }
 
-        private VirtualTemplatesCompareModel GetCompareModel(string virtualPath, bool showAllTemplates, string leftVersion, string rightVersion, bool populateHistory)
+        public ActionResult CompareDisplay(string VirtualPath, string leftVersion, string rightVersion)
+        {
+            return View(GetCompareModel(VirtualPath, leftVersion, rightVersion, false));
+        }
+
+        public ActionResult Revert(string VirtualPath)
+        {
+            VirtualTemplatesListViewModel viewModel;
+            if (this._viewPersistenceService.RevertTemplate(VirtualPath))
+            {
+                viewModel = this.PopulateViewModel();
+                var confirmMessage = _localizationService.GetString("/virtualtemplatesystem/messages/deleteconfirm",
+                    "Template: <strong>{0}</strong> successfully reverted to original");
+                viewModel.ConfirmMessage = string.Format(confirmMessage, VirtualPath);
+            }
+            else
+            {
+                viewModel = this.PopulateViewModel();
+                var errorMessage = _localizationService.GetString("/virtualtemplatesystem/messages/deleteerror",
+                    "Error when deleting: <strong>{0}</strong> from template repository");
+                viewModel.ErrorMessage = string.Format(errorMessage, VirtualPath);
+            }
+            return View("Index", viewModel);
+        }
+
+        public JsonResult SearchFiles(SearchViewModel search)
+        {
+            _profileHelper.SetProfileValue<string>(User.Identity.Name, ProfileKeyLastSearch, search.searchString);
+            var results = _templateSearcher.SearchFiles(search.searchString);
+            return Json(new { total = results.Count, data = results }, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult ClearSearch()
+        {
+            _profileHelper.SetProfileValue<string>(User.Identity.Name, ProfileKeyLastSearch, string.Empty);
+            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+        }
+
+        private VirtualTemplatesListViewModel PopulateViewModel()
+        {
+            var showAll = GetShowAllTemplatesValue();
+            var viewModel = new VirtualTemplatesListViewModel();
+            viewModel.ShowAllTemplates = showAll;
+            viewModel.TemplateList = _uITemplateLister.GetViewList(showAll);
+            viewModel.LastSearch =
+                _profileHelper.GetProfileValue<string>(User.Identity.Name, ProfileKeyLastSearch, string.Empty);
+            return viewModel;
+        }
+
+        private VirtualTemplatesListViewModel SaveTemplate(string VirtualPath, string FileContents)
+        {
+            VirtualTemplatesListViewModel viewModel;
+            if (this._viewPersistenceService.SaveTemplate(VirtualPath, FileContents))
+            {
+                viewModel = PopulateViewModel();
+                viewModel.LastActionPath = VirtualPath;
+                var confirmMessage = _localizationService.GetString("/virtualtemplatesystem/messages/saveconfirm",
+                    "Template: <strong>{0}</strong> successfully saved");
+                viewModel.ConfirmMessage = string.Format(confirmMessage, VirtualPath);
+            }
+            else
+            {
+                viewModel = PopulateViewModel();
+                var errorMessage = _localizationService.GetString("/virtualtemplatesystem/messages/saveerror",
+                    "Error when saving: <strong>{0}</strong> into template repository");
+                viewModel.ErrorMessage = string.Format(errorMessage, VirtualPath);
+
+            }
+            return viewModel;
+        }
+
+        private VirtualTemplatesCompareModel GetCompareModel(string virtualPath, string leftVersion, string rightVersion, bool populateHistory)
         {
             var model = new VirtualTemplatesCompareModel()
             {
-                VirtualPath = virtualPath,
-                ShowAllTemplates = showAllTemplates
+                VirtualPath = virtualPath
             };
 
             // Set up references for content
@@ -161,89 +275,31 @@ namespace VirtualTemplates.UI.Controllers
             return model;
         }
 
-        public ActionResult Compare(string VirtualPath, bool ShowAllTemplates, string leftVersion, string rightVersion)
+        //private bool SetShowAllTemplatesValue(bool? ShowAllTemplates)
+        //{
+        //    string profileKey = "vts:ShowAllTemplates";
+        //    bool showAll = false;
+        //    if (ShowAllTemplates.HasValue)
+        //    {
+        //        var profile = _profileHelper.GetOrCreateProfile(User.Identity.Name);
+        //        profile.Settings[profileKey] = ShowAllTemplates.Value;
+        //        _profileHelper.Save(profile);
+        //        showAll = ShowAllTemplates.Value;
+        //    }
+
+        //    object showAllObj;
+        //    if (_profileHelper.GetProfile(User.Identity.Name).Settings
+        //        .TryGetValue(profileKey, out showAllObj))
+        //    {
+        //        showAll = (bool)showAllObj;
+        //    }
+
+        //    return showAll;
+        //}
+
+        private bool GetShowAllTemplatesValue()
         {
-            return View(GetCompareModel(VirtualPath, ShowAllTemplates, leftVersion, rightVersion, true));
-        }
-
-
-        [HttpPost]
-        public ActionResult Compare(VirtualTemplatesCompareModel model)
-        {
-            var viewModel = SaveTemplate(false, model.VirtualPath, model.LeftContents);
-            if (model.Button == "Save and close")
-            {
-                return View("Index", viewModel);
-            }
-            else
-            {
-                model.ConfirmMessage =
-                    string.Format(
-                        _localizationService.GetString("/virtualtemplatesystem/messages/saveconfirm",
-                            "Template: <strong>{0}</strong> successfully saved"), model.VirtualPath);
-                return View(model);
-            }
-        }
-
-        public ActionResult CompareDisplay(string VirtualPath, bool ShowAllTemplates, string leftVersion, string rightVersion)
-        {
-            return View(GetCompareModel(VirtualPath, ShowAllTemplates, leftVersion, rightVersion, false));
-        }
-
-        public ActionResult Revert(string VirtualPath, bool ShowAllTemplates)
-        {
-            VirtualTemplatesListViewModel viewModel;
-            if (this._viewPersistenceService.RevertTemplate(VirtualPath))
-            {
-                viewModel = this.PopulateViewModel(ShowAllTemplates);
-                var confirmMessage = _localizationService.GetString("/virtualtemplatesystem/messages/deleteconfirm",
-                    "Template: <strong>{0}</strong> successfully reverted to original");
-                viewModel.ConfirmMessage = string.Format(confirmMessage, VirtualPath);
-            }
-            else
-            {
-                viewModel = this.PopulateViewModel(ShowAllTemplates);
-                var errorMessage = _localizationService.GetString("/virtualtemplatesystem/messages/deleteerror",
-                    "Error when deleting: <strong>{0}</strong> from template repository");
-                viewModel.ErrorMessage = string.Format(errorMessage, VirtualPath);
-            }
-            return View("Index", viewModel);
-        }
-
-        public JsonResult SearchFiles(SearchViewModel search)
-        {
-            var results = _templateSearcher.SearchFiles(search.searchString);
-            return Json(new { total = results.Count, data = results }, JsonRequestBehavior.AllowGet);
-        }
-
-        private VirtualTemplatesListViewModel PopulateViewModel(bool ShowAllTemplates)
-        {
-            var viewModel = new VirtualTemplatesListViewModel();
-            viewModel.ShowAllTemplates = false;
-            viewModel.TemplateList = _uITemplateLister.GetViewList(ShowAllTemplates);
-            return viewModel;
-        }
-
-        private VirtualTemplatesListViewModel SaveTemplate(bool ShowAllTemplates, string VirtualPath, string FileContents)
-        {
-            VirtualTemplatesListViewModel viewModel;
-            if (this._viewPersistenceService.SaveTemplate(VirtualPath, FileContents))
-            {
-                viewModel = PopulateViewModel(ShowAllTemplates);
-                viewModel.LastActionPath = VirtualPath;
-                var confirmMessage = _localizationService.GetString("/virtualtemplatesystem/messages/saveconfirm",
-                    "Template: <strong>{0}</strong> successfully saved");
-                viewModel.ConfirmMessage = string.Format(confirmMessage, VirtualPath);
-            }
-            else
-            {
-                viewModel = PopulateViewModel(ShowAllTemplates);
-                var errorMessage = _localizationService.GetString("/virtualtemplatesystem/messages/saveerror",
-                    "Error when saving: <strong>{0}</strong> into template repository");
-                viewModel.ErrorMessage = string.Format(errorMessage, VirtualPath);
-
-            }
-            return viewModel;
+            return _profileHelper.GetProfileValue<bool>(User.Identity.Name, ProfileKeyShowAllTemplates, false);
         }
     }
 }

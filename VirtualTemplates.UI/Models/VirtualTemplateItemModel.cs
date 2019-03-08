@@ -12,8 +12,6 @@ namespace VirtualTemplates.UI.Models
         [AllowHtml]
         public string TemplateContents { get; set; }
 
-        public bool ShowAllTemplates { get; set; }
-
         public string Button { get; set; }
     }
 }

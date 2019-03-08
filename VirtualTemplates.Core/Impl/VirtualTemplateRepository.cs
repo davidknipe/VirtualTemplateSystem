@@ -65,7 +65,7 @@ namespace VirtualTemplates.Core.Impl
                         },
                         ReadStrategy.Wait);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // If application is trying to access a file during Application_Start(), for instance
                     // by calling BundleConfig.RegisterBundles() then this could throw an exception, as
