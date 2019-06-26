@@ -27,12 +27,29 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
 
     <style>
+
+        /*Fix to make Episerver platform UI work with bootstrap*/
+        *,
+        *::before,
+        *::after {
+            box-sizing: initial;
+        }
+
+        body {
+            font-family: Barlow,sans-serif;
+        }
+        
         body > #codeContainer {
-            height: calc(100vh - 100px);
+            height: calc(100vh - 50px);
         }
 
         body > .card-body .card-body {
-            height: calc(100vh - 175px);
+            height: calc(100vh - 125px);
+        }
+
+        body > .card-body {
+            display: block;
+            padding-top: 50px;
         }
 
         .nopadding {
@@ -137,12 +154,14 @@
             /* Note david-tec.com uses Cloudflare so are delivered from a CDN */
             background-image: url("https://www.david-tec.com/global/media/vtsloading.gif");
         }
+
     </style>
 </head>
 
 <body>
 
-@Html.Raw(EPiServer.Shell.Navigation.MenuHelper.CreateGlobalMenu("/global", "/global/cms/templates"))
+@Html.Raw(EPiServer.Shell.Navigation.MenuHelper.CreatePlatformNavigationMenu())
+
 <div class="spinner d-none"></div>
 @RenderBody()
 

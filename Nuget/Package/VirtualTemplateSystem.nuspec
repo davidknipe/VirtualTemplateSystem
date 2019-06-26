@@ -2,10 +2,10 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>VirtualTemplateSystem</id>
-    <version>3.3</version>
+    <version>3.4.0</version>
     <description>Virtual Template System for Episerver allows users to view and modify templates from the Episerver UI</description>
-    <releaseNotes>v3.3 UI enhancements and bug fixes </releaseNotes>
-    <iconUrl>https://www.david-tec.com/global/media/virtualtemplatesystem/vtsicon.png?v3.3</iconUrl>
+    <releaseNotes>v3.4 UI compatibility with Episerver platform UI</releaseNotes>
+    <iconUrl>https://www.david-tec.com/global/media/virtualtemplatesystem/vtsicon.png?v3.4</iconUrl>
     <authors>David Knipe</authors>
     <owners>David Knipe</owners>
     <licenseUrl>https://github.com/davidknipe/VirtualTemplateSystem/blob/master/LICENSE</licenseUrl>
@@ -13,7 +13,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <tags>Episerver</tags>
     <dependencies>
-      <dependency id="EPiServer.CMS.UI" version="[11.0, 12.0)" />
+      <dependency id="EPiServer.CMS.UI" version="[11.21.0, 12.0)" />
     </dependencies>
   </metadata>
 </package>

@@ -5,7 +5,12 @@ Virtual Template system for Episerver allows editors to edit templates in the Ep
 
 More information can be found here: https://www.david-tec.com/tag/vts
 
+
 ## Change log
+
+### v3.4
+
+- Use new Episerver platform UI
 
 ### v3.3
 
