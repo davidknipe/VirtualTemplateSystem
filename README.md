@@ -36,7 +36,7 @@ More information can be found here: https://www.david-tec.com/tag/vts
 
 ### v3.2
 
-- Add abilty to search in file contents
+- Add ability to search in file contents
 
 ### v3.1.1
 
