@@ -8,6 +8,10 @@ More information can be found here: https://www.david-tec.com/tag/vts
 
 ## Change log
 
+### v3.4.1
+
+- Use latest version of Episerver platform UI
+
 ### v3.4
 
 - Use new Episerver platform UI

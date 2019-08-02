@@ -215,3 +215,4 @@ pip-log.txt
 .mr.developer.cfg
 Solution File/.vs/
 Solution File/packages/
+*.nupkg
