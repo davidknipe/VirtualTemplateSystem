@@ -171,9 +171,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Impl\TemplateComparer.cs" />
     <Compile Include="Interfaces\IFileSearcher.cs" />
     <Compile Include="Impl\FileSearcher.cs" />
     <Compile Include="Impl\TemplateKeyConverter.cs" />
+    <Compile Include="Interfaces\ITemplateComparer.cs" />
     <Compile Include="Interfaces\ITemplateKeyConverter.cs" />
     <Compile Include="Impl\VirtualTemplateVersionRepository.cs" />
     <Compile Include="Interfaces\IVirtualTemplateVersionRepository.cs" />

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Web;
 using EPiServer;
 using EPiServer.Core;
 using EPiServer.DataAccess;
 using EPiServer.Framework.Cache;
+using EPiServer.Framework.FileSystem;
 using EPiServer.Framework.Localization;
 using EPiServer.Security;
 using EPiServer.ServiceLocation;
@@ -23,11 +25,12 @@ namespace VirtualTemplates.Core.Impl
         private readonly IVirtualTemplateVersionRepository _templateVersionRepo;
         private readonly ITemplateKeyConverter _keyConverter;
         private readonly LocalizationService _localization;
+        private readonly ITemplateComparer _templateComparer;
 
         public VirtualTemplateRepository(IVirtualTemplatesCache virtualTemplatesCache,
             ISynchronizedObjectInstanceCache cache, IContentRepository contentRepo, 
             IVirtualTemplateVersionRepository templateVersionRepo, ITemplateKeyConverter keyConverter,
-            LocalizationService localization)
+            LocalizationService localization, ITemplateComparer fileComparer)
         {
             _virtualTemplatesCache = virtualTemplatesCache;
             _cache = cache;
@@ -35,6 +38,7 @@ namespace VirtualTemplates.Core.Impl
             _templateVersionRepo = templateVersionRepo;
             _keyConverter = keyConverter;
             _localization = localization;
+            _templateComparer = fileComparer;
         }
 
         private Dictionary<string, ContentReference> RegisteredViews
@@ -155,7 +159,8 @@ namespace VirtualTemplates.Core.Impl
                         IsVirtual = true,
                         FilePath = templateContents.VirtualPath,
                         ChangedBy = templateContents.ChangedBy,
-                        Versions = _templateVersionRepo.GetAllVersions(templateContents.ContentLink, templateContents.VirtualPath)
+                        Versions = _templateVersionRepo.GetAllVersions(templateContents.ContentLink, templateContents.VirtualPath),
+                        TemplateIsChanged = _templateComparer.TemplateIsChanged(templateContents.TemplateContents, templateContents.VirtualPath)
                     });
                 }
             }

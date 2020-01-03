@@ -8,6 +8,14 @@ More information can be found here: https://www.david-tec.com/tag/vts
 
 ## Change log
 
+### v3.5
+
+- The revert button is now either green or red. Green indicating that the template is the same as the one on disk, red meaning the template is different so should be reverted with caution
+- When saving a template using the "Save" button the confirmation message now disappears as soon as an editor changes it
+- The path is now clickable to either edit or view a template depending on whether its virtualised or not
+- Now possible to choose to search in file names only, rather than whole file contents
+- Minor bug fixes
+
 ### v3.4.1
 
 - Use latest version of Episerver platform UI

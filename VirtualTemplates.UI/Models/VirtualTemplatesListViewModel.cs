@@ -11,5 +11,6 @@ namespace VirtualTemplates.UI.Models
         public bool ShowAllTemplates;
         public IEnumerable<UiTemplate> TemplateList;
         public string LastSearch;
+        public bool SearchFileNamesOnly;
     }
 }

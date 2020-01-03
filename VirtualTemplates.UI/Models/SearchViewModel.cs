@@ -8,5 +8,6 @@ namespace VirtualTemplates.UI.Models
         [Required]
         [AllowHtml]
         public string searchString { get; set; }
+        public bool searchFileNamesOnly { get; set; }
     }
 }

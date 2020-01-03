@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 using EPiServer.ServiceLocation;
 using VirtualTemplates.Core.Interfaces;
@@ -24,28 +25,36 @@ namespace VirtualTemplates.Core.Impl
         }
 
         /// <inheritdoc />
-        public List<string> SearchFiles(string searchString)
+        public List<string> SearchFiles(string searchString, bool searchInFileNamesOnly)
         {
             var results = new List<string>();
-
             var allFiles = _fileLister.ListPhysicalFiles();
             searchString = searchString.ToLower();
 
             foreach (var file in allFiles)
             {
-                if (file.ToLower().Contains(searchString))
+
+                if (searchInFileNamesOnly)
                 {
-                    results.Add(file);
+                    if (file.ToLower().Contains(searchString))
+                        results.Add(file);
                 }
                 else
                 {
-                    var isVirtualFile = _templateRepo.Exists(file);
-                    var fileContents = isVirtualFile
-                        ? _templateRepo.GetTemplate(file).FileContents.ToLower()
-                        : _fileReader.ReadFile(_httpContext.Server.MapPath("~" + file)).ToLower();
-
-                    if (fileContents.Contains(searchString))
+                    if (file.ToLower().Contains(searchString))
+                    {
                         results.Add(file);
+                    }
+                    else
+                    {
+                        var isVirtualFile = _templateRepo.Exists(file);
+                        var fileContents = isVirtualFile
+                            ? _templateRepo.GetTemplate(file).FileContents.ToLower()
+                            : _fileReader.ReadFile(_httpContext.Server.MapPath("~" + file)).ToLower();
+
+                        if (fileContents.Contains(searchString))
+                            results.Add(file);
+                    }
                 }
             }
 

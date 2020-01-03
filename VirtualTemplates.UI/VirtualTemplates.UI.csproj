@@ -51,7 +51,7 @@
       <HintPath>..\Solution File\packages\EPiServer.CMS.AspNet.11.12.0\lib\net461\EPiServer.Cms.AspNet.dll</HintPath>
     </Reference>
     <Reference Include="EPiServer.Cms.Shell.UI, Version=11.21.1.0, Culture=neutral, PublicKeyToken=8fe83dea738b45b7, processorArchitecture=MSIL">
-      <HintPath>..\Solution File\packages\EPiServer.CMS.UI.Core.11.21.1\lib\net461\EPiServer.Cms.Shell.UI.dll</HintPath>
+      <HintPath>..\..\..\temp\InstallVirtualTemplates\InstallVirtualTemplates\packages\EPiServer.CMS.UI.Core.11.21.1\lib\net461\EPiServer.Cms.Shell.UI.dll</HintPath>
     </Reference>
     <Reference Include="EPiServer.Configuration, Version=11.12.0.0, Culture=neutral, PublicKeyToken=8fe83dea738b45b7, processorArchitecture=MSIL">
       <HintPath>..\Solution File\packages\EPiServer.CMS.AspNet.11.12.0\lib\net461\EPiServer.Configuration.dll</HintPath>
@@ -87,13 +87,13 @@
       <HintPath>..\Solution File\packages\EPiServer.ServiceLocation.StructureMap.2.0.0\lib\net461\EPiServer.ServiceLocation.StructureMap.dll</HintPath>
     </Reference>
     <Reference Include="EPiServer.Shell, Version=11.21.1.0, Culture=neutral, PublicKeyToken=8fe83dea738b45b7, processorArchitecture=MSIL">
-      <HintPath>..\Solution File\packages\EPiServer.CMS.UI.Core.11.21.1\lib\net461\EPiServer.Shell.dll</HintPath>
+      <HintPath>..\..\..\temp\InstallVirtualTemplates\InstallVirtualTemplates\packages\EPiServer.CMS.UI.Core.11.21.1\lib\net461\EPiServer.Shell.dll</HintPath>
     </Reference>
     <Reference Include="EPiServer.Shell.UI, Version=11.21.1.0, Culture=neutral, PublicKeyToken=8fe83dea738b45b7, processorArchitecture=MSIL">
-      <HintPath>..\Solution File\packages\EPiServer.CMS.UI.Core.11.21.1\lib\net461\EPiServer.Shell.UI.dll</HintPath>
+      <HintPath>..\..\..\temp\InstallVirtualTemplates\InstallVirtualTemplates\packages\EPiServer.CMS.UI.Core.11.21.1\lib\net461\EPiServer.Shell.UI.dll</HintPath>
     </Reference>
     <Reference Include="EPiServer.UI, Version=11.21.1.0, Culture=neutral, PublicKeyToken=8fe83dea738b45b7, processorArchitecture=MSIL">
-      <HintPath>..\Solution File\packages\EPiServer.CMS.UI.Core.11.21.1\lib\net461\EPiServer.UI.dll</HintPath>
+      <HintPath>..\..\..\temp\InstallVirtualTemplates\InstallVirtualTemplates\packages\EPiServer.CMS.UI.Core.11.21.1\lib\net461\EPiServer.UI.dll</HintPath>
     </Reference>
     <Reference Include="EPiServer.Web.WebControls, Version=11.12.0.0, Culture=neutral, PublicKeyToken=8fe83dea738b45b7, processorArchitecture=MSIL">
       <HintPath>..\Solution File\packages\EPiServer.CMS.AspNet.11.12.0\lib\net461\EPiServer.Web.WebControls.dll</HintPath>
@@ -178,6 +178,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuthoriseVirtualPathAttribute.cs" />
     <Compile Include="Controllers\VirtualTemplatesController.cs" />
     <Compile Include="Filter\AddXssHeader.cs" />
     <Compile Include="EditorDescriptors\HideCategoryOnVirtualTemplatesEditorDescriptor.cs" />
@@ -190,7 +191,7 @@
     <Compile Include="Models\VirtualTemplatesCompareModel.cs" />
     <Compile Include="Models\VirtualTemplateItemModel.cs" />
     <Compile Include="Models\VirtualTemplatesListViewModel.cs" />
-    <Compile Include="SecureUIAttribute.cs" />
+    <Compile Include="AuthoriseUiAttribute.cs" />
     <Compile Include="VirtualTemplatesMenuProvider.cs" />
     <Compile Include="Impl\UiTemplateLister.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

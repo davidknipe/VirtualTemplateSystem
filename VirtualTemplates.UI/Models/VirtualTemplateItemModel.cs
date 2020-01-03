@@ -13,5 +13,7 @@ namespace VirtualTemplates.UI.Models
         public string TemplateContents { get; set; }
 
         public string Button { get; set; }
+
+        public bool TemplateIsChanged { get; set; }
     }
 }

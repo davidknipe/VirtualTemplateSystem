@@ -12,11 +12,23 @@ namespace VirtualTemplates.Core.Impl
     {
         /// <inheritdoc />
         public IEnumerable<string> ListPhysicalFiles() 
-            => ListPhysicalFiles(HostingEnvironment.ApplicationPhysicalPath,
-                new List<string>() {"*.cshtml", "*.css", "*.js"});
+            => ListPhysicalFilesInternal(HostingEnvironment.ApplicationPhysicalPath,
+                new List<string>() {"*.cshtml", "*.css", "*.js"}, false);
+
+        public IEnumerable<string> ListPhysicalFiles(bool allLowerCase)
+            => ListPhysicalFilesInternal(HostingEnvironment.ApplicationPhysicalPath,
+                new List<string>() {"*.cshtml", "*.css", "*.js"}, allLowerCase);
 
         /// <inheritdoc />
         public IEnumerable<string> ListPhysicalFiles(string path, IList<string> searchPattern)
+        {
+            return ListPhysicalFilesInternal(path, searchPattern, false);
+        }
+
+        public IEnumerable<string> ListPhysicalFiles(string path, string searchPattern) 
+            => ListPhysicalFilesInternal(path, new List<string> { searchPattern }, false);
+
+        private IEnumerable<string> ListPhysicalFilesInternal(string path, IList<string> searchPattern, bool allLowerCase)
         {
             var results = new List<string>();
 
@@ -24,13 +36,18 @@ namespace VirtualTemplates.Core.Impl
             {
                 foreach (var f in Directory.GetFiles(path, s, SearchOption.AllDirectories))
                 {
-                    results.Add(f.Remove(0, path.Length - 1).Replace(@"\", @"/"));
+                    if (allLowerCase)
+                    {
+                        results.Add(f.Remove(0, path.Length - 1).Replace(@"\", @"/").ToLower());
+                    }
+                    else
+                    {
+                        results.Add(f.Remove(0, path.Length - 1).Replace(@"\", @"/"));
+                    }
                 }
             }
             return results.OrderBy(x => x);
         }
 
-        public IEnumerable<string> ListPhysicalFiles(string path, string searchPattern) 
-            => ListPhysicalFiles(path, new List<string> { searchPattern });
     }
 }

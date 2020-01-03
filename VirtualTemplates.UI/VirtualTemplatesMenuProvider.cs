@@ -73,6 +73,16 @@ namespace VirtualTemplates.UI
                     SortIndex = int.MaxValue
                 };
 
+            var menuRevert =
+                new UrlMenuItem(
+                    _localizationService.GetString("/virtualtemplatesystem/menus/menuitem", "Templates"),
+                    menuPath, 
+                    "/" + RootUiUrl + "VirtualTemplates/Revert")
+                {
+                    IsAvailable = (request) => false,
+                    SortIndex = int.MaxValue
+                };
+
             var list = new List<MenuItem>();
             if (this.IsTemplateEditor)
             {
@@ -80,6 +90,7 @@ namespace VirtualTemplates.UI
                 list.Add(menuDisplay);
                 list.Add(menuEdit);
                 list.Add(menuCompare);
+                list.Add(menuRevert);
             }
             return list;
         }

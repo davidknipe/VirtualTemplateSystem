@@ -1,7 +1,6 @@
 ﻿using EPiServer.Framework.Localization;
 using System.Web.Mvc;
 using EPiServer.Core;
-using EPiServer.Shell.Profile;
 using VirtualTemplates.Core.Interfaces;
 using VirtualTemplates.Core.Models;
 using VirtualTemplates.UI.Filter;
@@ -21,9 +20,11 @@ namespace VirtualTemplates.UI.Controllers
         private readonly IVirtualTemplateVersionRepository _versionRepository;
         private readonly IFileSearcher _templateSearcher;
         private readonly IProfileHelper _profileHelper;
+        private ITemplateComparer _templateComparer;
 
         private const string ProfileKeyShowAllTemplates = "vts:ShowAllTemplates";
         private const string ProfileKeyLastSearch = "vts:LastSearch";
+        private const string ProfileSearchFileNamesOnly = "vts:SearchFileNamesOnly";
 
         public VirtualTemplatesController(
             IVirtualTemplateRepository viewPersistenceService
@@ -32,7 +33,8 @@ namespace VirtualTemplates.UI.Controllers
             , IPhysicalFileReader physicalFileReader
             , IVirtualTemplateVersionRepository versionRepository
             , IFileSearcher templateSearcher
-            , IProfileHelper profileHelper)
+            , IProfileHelper profileHelper, 
+            ITemplateComparer templateComparer)
         {
             _viewPersistenceService = viewPersistenceService;
             _localizationService = localizationService;
@@ -41,6 +43,7 @@ namespace VirtualTemplates.UI.Controllers
             _versionRepository = versionRepository;
             _templateSearcher = templateSearcher;
             _profileHelper = profileHelper;
+            _templateComparer = templateComparer;
         }
 
         public ActionResult Index(bool? ShowAllTemplates)
@@ -56,6 +59,7 @@ namespace VirtualTemplates.UI.Controllers
         {
         }
 
+        [AuthoriseVirtualPath]        
         public ActionResult MakeVirtual(string VirtualPath)
         {
             var result = SaveTemplate(VirtualPath,
@@ -65,29 +69,34 @@ namespace VirtualTemplates.UI.Controllers
             return RedirectToAction("Edit", editModel);
         }
 
+        [AuthoriseVirtualPath]        
         public ActionResult Display(string VirtualPath)
         {
             var isVirtual = _viewPersistenceService.Exists(VirtualPath);
+            var templateContents = isVirtual
+                ? _viewPersistenceService.GetTemplate(VirtualPath).FileContents
+                : _fileReader.ReadFile(Server.MapPath("~" + VirtualPath));
             return View(
                 new VirtualTemplateItemModel()
                 {
                     IsVirtual = _viewPersistenceService.Exists(VirtualPath),
                     VirtualPath = VirtualPath,
-                    TemplateContents =
-                        isVirtual
-                            ? _viewPersistenceService.GetTemplate(VirtualPath).FileContents
-                            : _fileReader.ReadFile(Server.MapPath("~" + VirtualPath))
+                    TemplateContents = templateContents,
+                    TemplateIsChanged = _templateComparer.TemplateIsChanged(templateContents, VirtualPath)
                 });
         }
 
+        [AuthoriseVirtualPath]        
         public ActionResult Edit(string VirtualPath)
         {
+            var templateContents = _viewPersistenceService.GetTemplate(VirtualPath).FileContents;
             return View(
                 new VirtualTemplateItemModel()
                 {
                     IsVirtual = true,
                     VirtualPath = VirtualPath,
-                    TemplateContents = _viewPersistenceService.GetTemplate(VirtualPath).FileContents
+                    TemplateContents = templateContents,
+                    TemplateIsChanged = _templateComparer.TemplateIsChanged(templateContents, VirtualPath)
                 });
         }
 
@@ -120,6 +129,7 @@ namespace VirtualTemplates.UI.Controllers
             return Json(new { success = true, message = viewModel.ConfirmMessage });
         }
 
+        [AuthoriseVirtualPath]        
         public ActionResult Compare(string VirtualPath, string leftVersion, string rightVersion)
         {
             return View(GetCompareModel(VirtualPath, leftVersion, rightVersion, true));
@@ -144,6 +154,7 @@ namespace VirtualTemplates.UI.Controllers
             }
         }
 
+        [AuthoriseVirtualPath]        
         public ActionResult CompareDisplay(string VirtualPath, string leftVersion, string rightVersion)
         {
             return View(GetCompareModel(VirtualPath, leftVersion, rightVersion, false));
@@ -172,7 +183,8 @@ namespace VirtualTemplates.UI.Controllers
         public JsonResult SearchFiles(SearchViewModel search)
         {
             _profileHelper.SetProfileValue<string>(User.Identity.Name, ProfileKeyLastSearch, search.searchString);
-            var results = _templateSearcher.SearchFiles(search.searchString);
+            _profileHelper.SetProfileValue<bool>(User.Identity.Name, ProfileSearchFileNamesOnly, search.searchFileNamesOnly);
+            var results = _templateSearcher.SearchFiles(search.searchString, search.searchFileNamesOnly);
             return Json(new { total = results.Count, data = results }, JsonRequestBehavior.AllowGet);
         }
 
@@ -190,6 +202,8 @@ namespace VirtualTemplates.UI.Controllers
             viewModel.TemplateList = _uITemplateLister.GetViewList(showAll);
             viewModel.LastSearch =
                 _profileHelper.GetProfileValue<string>(User.Identity.Name, ProfileKeyLastSearch, string.Empty);
+            viewModel.SearchFileNamesOnly =
+                _profileHelper.GetProfileValue<bool>(User.Identity.Name, ProfileSearchFileNamesOnly, false);
             return viewModel;
         }
 
@@ -258,6 +272,9 @@ namespace VirtualTemplates.UI.Controllers
                                          rightTemplateContent.ChangedDate.ToString("dd-MMM-yy, hh:mm") + " by " +
                                          rightTemplateContent.ChangedBy;
             }
+
+            model.TemplateIsChanged =
+                _templateComparer.TemplateIsChanged(leftTemplateContent.FileContents, virtualPath);
 
             if (populateHistory)
             {

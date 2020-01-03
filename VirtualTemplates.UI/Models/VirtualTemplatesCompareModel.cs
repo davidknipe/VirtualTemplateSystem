@@ -25,5 +25,7 @@ namespace VirtualTemplates.UI.Models
         public string LeftVersionText { get; set; }
 
         public string RightVersionText { get; set; }
+
+        public bool TemplateIsChanged { get; set; }
     }
 }

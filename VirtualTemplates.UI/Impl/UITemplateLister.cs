@@ -35,7 +35,8 @@ namespace VirtualTemplates.UI.Impl
                             IsVirtual = (r != null),
                             FilePath = @t.p,
                             ChangedBy = r?.ChangedBy,
-                            Versions = r?.Versions
+                            Versions = r?.Versions,
+                            TemplateIsChanged = r?.TemplateIsChanged != null && (r?.TemplateIsChanged).Value
                         });
 
                 return returnData.OrderBy(x => x.FilePath);
